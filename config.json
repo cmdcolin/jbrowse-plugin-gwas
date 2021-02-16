@@ -1,0 +1,51 @@
+{
+  "plugins": [
+    {
+      "name": "UCSC",
+      "url": "http://localhost:9000/dist/jbrowse-plugin-ucsc.umd.development.js"
+    }
+  ],
+  "assemblies": [
+    {
+      "name": "hg38",
+      "aliases": ["GRCh38"],
+      "sequence": {
+        "type": "ReferenceSequenceTrack",
+        "trackId": "P6R5xbRqRr",
+        "adapter": {
+          "type": "BgzipFastaAdapter",
+          "fastaLocation": {
+            "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz"
+          },
+          "faiLocation": {
+            "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz.fai"
+          },
+          "gziLocation": {
+            "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz.gzi"
+          }
+        }
+      },
+      "refNameAliases": {
+        "adapter": {
+          "type": "RefNameAliasAdapter",
+          "location": {
+            "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/GRCh38/hg38_aliases.txt"
+          }
+        }
+      }
+    }
+  ],
+  "tracks": [
+    {
+      "type": "FeatureTrack",
+      "trackId": "genehancer_ucsc_hg38",
+      "name": "UCSC GeneHancer",
+      "category": ["Annotation"],
+      "assemblyNames": ["hg38"],
+      "adapter": {
+        "type": "UCSCAdapter",
+        "track": "geneHancerInteractionsDoubleElite"
+      }
+    }
+  ]
+}
