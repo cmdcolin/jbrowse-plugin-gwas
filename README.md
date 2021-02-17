@@ -1,4 +1,4 @@
-# `jbrowse-plugin-ucsc`
+# `jbrowse-plugin-ucsc` (work in progress)
 
 > This plugin adapts the [UCSC API](https://genome.ucsc.edu/goldenPath/help/api.html)
 

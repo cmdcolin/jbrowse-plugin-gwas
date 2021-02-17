@@ -1,11 +1,19 @@
-import { ConfigurationSchema } from '@jbrowse/core/configuration'
-import ConfigSchema from './configSchema'
+export { default } from "./LinearManhattanRenderer";
 
-export { WiggleRendering as ReactComponent } from '@jbrowse/plugin-wiggle'
-export { default } from './LinearManhattanRenderer'
+export function configSchemaFactory(pluginManager) {
+  const { ConfigurationSchema } = pluginManager.lib[
+    "@jbrowse/core/configuration"
+  ];
 
-export const configSchema = ConfigurationSchema(
-  'LinearManhattanRenderer',
-  {},
-  { baseConfiguration: ConfigSchema, explicitlyTyped: true },
-)
+  return ConfigurationSchema(
+    "LinearManhattanRenderer",
+    {
+      color: {
+        type: "color",
+        description: "the color of the marks",
+        defaultValue: "red",
+      },
+    },
+    { explicitlyTyped: true },
+  );
+}
