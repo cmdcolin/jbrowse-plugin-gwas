@@ -1,6 +1,6 @@
-# `jbrowse-plugin-ucsc` (work in progress)
+# `jbrowse-plugin-gwas` (work in progress)
 
-> This plugin adapts the [UCSC API](https://genome.ucsc.edu/goldenPath/help/api.html)
+Plugin for displaying GWAS results such as manhattan plot renderings
 
 ## Install
 
@@ -11,7 +11,7 @@ No installation required
 ### For use in [`@jbrowse/react-linear-view`](https://www.npmjs.com/package/@jbrowse/react-linear-genome-view)
 
 ```
-yarn add jbrowse-plugin-ucsc
+yarn add jbrowse-plugin-gwas
 ```
 
 ## Usage
@@ -21,8 +21,8 @@ yarn add jbrowse-plugin-ucsc
 #### Development
 
 ```
-git clone https://github.com/cmdcolin/jbrowse-plugin-ucsc-api.git
-cd jbrowse-plugin-ucsc-api
+git clone https://github.com/cmdcolin/jbrowse-plugin-gwas.git
+cd jbrowse-plugin-gwas
 yarn
 yarn start
 ```
@@ -33,7 +33,7 @@ http://localhost:3000/?config=http://localhost:9000/config.json
 
 #### Demo
 
-https://s3.amazonaws.com/jbrowse.org/code/jb2/master/index.html?config=https%3A%2F%2Funpkg.com%2Fjbrowse-plugin-ucsc%2Fdist%2Fconfig.json&session=share-wyY8ZgC9uY&password=CtcMX
+https://s3.amazonaws.com/jbrowse.org/code/jb2/master/index.html?config=https%3A%2F%2Funpkg.com%2Fjbrowse-plugin-gwas%2Fdist%2Fconfig.json
 
 #### Production
 
@@ -43,8 +43,8 @@ Add to the "plugins" of your JBrowse Web config:
 {
   "plugins": [
     {
-      "name": "UCSC",
-      "url": "https://ghcdn.rawgit.org/cmdcolin/jbrowse-plugin-ucsc-api/master/rawgit/jbrowse-plugin-ucsc.umd.production.min.js"
+      "name": "gwas",
+      "url": "https://unpkg.com/jbrowse-plugin-gwas/dist/jbrowse-plugin-gwas.umd.production.min.js"
     }
   ]
 }
@@ -61,7 +61,7 @@ import {
   JBrowseLinearGenomeView,
   ThemeProvider,
 } from "@jbrowse/react-linear-view";
-import UCSC from "jbrowse-plugin-ucsc";
+import GWAS from "jbrowse-plugin-gwas";
 
 const theme = createJBrowseTheme();
 
@@ -73,7 +73,7 @@ function View() {
     tracks: [
       /* tracks */
     ],
-    plugins: [UCSC],
+    plugins: [GWAS],
   });
   return (
     <ThemeProvider theme={theme}>
