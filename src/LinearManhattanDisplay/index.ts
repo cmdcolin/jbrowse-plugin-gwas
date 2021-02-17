@@ -7,8 +7,8 @@ export function configSchemaFactory(pluginManager: PluginManager) {
   ];
 
   const LGVPlugin = pluginManager.getPlugin(
-    "LGVPlugin",
-  ) as import("@jbrowse/plugin-wiggle").default;
+    "LinearGenomeViewPlugin",
+  ) as import("@jbrowse/plugin-linear-genome-view").default;
   //@ts-ignore
   const { baseLinearDisplayConfigSchema } = LGVPlugin.exports;
 

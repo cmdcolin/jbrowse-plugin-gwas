@@ -1,8 +1,6 @@
-import DisplayType from "@jbrowse/core/pluggableElementTypes/DisplayType";
-
 import Plugin from "@jbrowse/core/Plugin";
 import PluginManager from "@jbrowse/core/PluginManager";
-import ManhattanRenderer, {
+import rendererFactory, {
   configSchemaFactory as linearManhattanRendererConfigSchemaFactory,
 } from "./LinearManhattanRenderer";
 import {
@@ -17,11 +15,14 @@ export default class AlignmentsPlugin extends Plugin {
     const WigglePlugin = pluginManager.getPlugin(
       "WigglePlugin",
     ) as import("@jbrowse/plugin-wiggle").default;
+    const DisplayType =
+      pluginManager.lib["@jbrowse/core/pluggableElementTypes/DisplayType"];
     const {
       LinearWiggleDisplayReactComponent,
-      XYPlotReactComponent: ReactComponent,
+      XYPlotRendererReactComponent,
       //@ts-ignore
     } = WigglePlugin.exports;
+
     pluginManager.addDisplayType(() => {
       const configSchema = linearManhattanDisplayConfigSchemaFactory(
         pluginManager,
@@ -38,16 +39,18 @@ export default class AlignmentsPlugin extends Plugin {
         ReactComponent: LinearWiggleDisplayReactComponent,
       });
     });
-    pluginManager.addRendererType(
-      () =>
-        //@ts-ignore
-        new ManhattanRenderer({
-          name: "LinearManhattanRenderer",
-          ReactComponent,
-          configSchema: linearManhattanRendererConfigSchemaFactory(
-            pluginManager,
-          ),
-        }),
-    );
+
+    pluginManager.addRendererType(() => {
+      //@ts-ignore
+      const ManhattanRenderer = new rendererFactory(pluginManager);
+      const configSchema = linearManhattanRendererConfigSchemaFactory(
+        pluginManager,
+      );
+      return new ManhattanRenderer({
+        name: "LinearManhattanRenderer",
+        ReactComponent: XYPlotRendererReactComponent,
+        configSchema,
+      });
+    });
   }
 }

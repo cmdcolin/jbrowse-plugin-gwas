@@ -1,27 +1,27 @@
 {
   "plugins": [
     {
-      "name": "UCSC",
-      "url": "http://localhost:9000/dist/jbrowse-plugin-ucsc.umd.development.js"
+      "name": "GWAS",
+      "url": "http://localhost:9000/dist/jbrowse-plugin-gwas.umd.development.js"
     }
   ],
   "assemblies": [
     {
-      "name": "hg38",
-      "aliases": ["GRCh38"],
+      "name": "hg19",
+      "aliases": ["GRCh37"],
       "sequence": {
         "type": "ReferenceSequenceTrack",
-        "trackId": "P6R5xbRqRr",
+        "trackId": "Pd8Wh30ei9R",
         "adapter": {
           "type": "BgzipFastaAdapter",
           "fastaLocation": {
-            "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz"
+            "uri": "https://jbrowse.org/genomes/hg19/fasta/hg19.fa.gz"
           },
           "faiLocation": {
-            "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz.fai"
+            "uri": "https://jbrowse.org/genomes/hg19/fasta/hg19.fa.gz.fai"
           },
           "gziLocation": {
-            "uri": "https://jbrowse.org/genomes/GRCh38/fasta/hg38.prefix.fa.gz.gzi"
+            "uri": "https://jbrowse.org/genomes/hg19/fasta/hg19.fa.gz.gzi"
           }
         }
       },
@@ -29,7 +29,7 @@
         "adapter": {
           "type": "RefNameAliasAdapter",
           "location": {
-            "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/GRCh38/hg38_aliases.txt"
+            "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/hg19_aliases.txt"
           }
         }
       }
@@ -38,14 +38,29 @@
   "tracks": [
     {
       "type": "FeatureTrack",
-      "trackId": "genehancer_ucsc_hg38",
-      "name": "UCSC GeneHancer",
+      "trackId": "gwas_track",
+      "name": "GWAS",
       "category": ["Annotation"],
-      "assemblyNames": ["hg38"],
+      "assemblyNames": ["hg19"],
       "adapter": {
-        "type": "UCSCAdapter",
-        "track": "geneHancerInteractionsDoubleElite"
-      }
+        "type": "BedTabixAdapter",
+        "scoreColumn": "neg_log_pvalue",
+        "bedGzLocation": {
+          "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
+        },
+        "index": {
+          "location": {
+            "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz.tbi"
+          },
+          "indexType": "TBI"
+        }
+      },
+      "displays": [
+        {
+          "displayId": "gwas_display",
+          "type": "LinearManhattanDisplay"
+        }
+      ]
     }
   ]
 }
