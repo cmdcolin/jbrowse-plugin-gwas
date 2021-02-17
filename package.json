@@ -41,6 +41,7 @@
     "@babel/preset-react": "^7.10.4",
     "@jbrowse/core": "^1.0.3",
     "@jbrowse/development-tools": "^1.0.3",
+    "@jbrowse/plugin-linear-genome-view": "^1.0.3",
     "@jbrowse/plugin-wiggle": "^1.0.3",
     "@material-ui/core": "^4.9.13",
     "@material-ui/lab": "^4.0.0-alpha.45",
@@ -54,8 +55,5 @@
     "serve": "^11.3.2",
     "tslib": "^2.0.3",
     "typescript": "^4.1.3"
-  },
-  "dependencies": {
-    "@jbrowse/plugin-linear-genome-view": "^1.0.3"
   }
 }
