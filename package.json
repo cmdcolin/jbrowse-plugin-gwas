@@ -1,6 +1,6 @@
 {
   "name": "jbrowse-plugin-gwas",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "JBrowse 2 GWAS API plugin",
   "repository": "github:cmdcolin/jbrowse-plugin-gwas",
   "jbrowse-plugin": {
