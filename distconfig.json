@@ -1,8 +1,8 @@
 {
   "plugins": [
     {
-      "name": "UCSC",
-      "url": "https://unpkg.com/jbrowse-plugin-ucsc/dist/jbrowse-plugin-ucsc.umd.production.min.js"
+      "name": "GWAS",
+      "url": "https://unpkg.com/jbrowse-plugin-gwas/dist/jbrowse-plugin-gwas.umd.production.min.js"
     }
   ],
   "assemblies": [
