@@ -1,3 +1,5 @@
+# v1.0.2
+
 - Add YSCALEBAR_LABEL_OFFSET for improved rendering with 1.0.4
 
 # v1.0.1
