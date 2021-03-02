@@ -11,7 +11,7 @@ export function configSchemaFactory(pluginManager) {
       color: {
         type: "color",
         description: "the color of the marks",
-        defaultValue: "red",
+        defaultValue: "darkblue",
       },
     },
     { explicitlyTyped: true },
