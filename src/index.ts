@@ -50,6 +50,7 @@ export default class AlignmentsPlugin extends Plugin {
         name: "LinearManhattanRenderer",
         ReactComponent: XYPlotRendererReactComponent,
         configSchema,
+        pluginManager,
       });
     });
   }
