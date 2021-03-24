@@ -1,3 +1,7 @@
+# v1.0.3
+
+- Fix for v1.1.0 of jbrowse-web requires passing pluginManager to renderer constructor
+
 # v1.0.2
 
 - Add YSCALEBAR_LABEL_OFFSET for improved rendering with 1.0.4
