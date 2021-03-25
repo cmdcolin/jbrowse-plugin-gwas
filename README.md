@@ -1,43 +1,15 @@
-# `jbrowse-plugin-gwas` (work in progress)
+# jbrowse-plugin-gwas
 
 Plugin for displaying GWAS results such as manhattan plot renderings
 
-## Install
+## Screenshot
 
-### For use in [JBrowse Web](https://jbrowse.org/jb2/docs/quickstart_web)
+![](img/1.png)
+![](img/2.png)
 
-No installation required
+## Usage in jbrowse-web
 
-### For use in [`@jbrowse/react-linear-view`](https://www.npmjs.com/package/@jbrowse/react-linear-genome-view)
-
-```
-yarn add jbrowse-plugin-gwas
-```
-
-## Usage
-
-### In [JBrowse Web](https://jbrowse.org/jb2/docs/quickstart_web)
-
-#### Development
-
-```
-git clone https://github.com/cmdcolin/jbrowse-plugin-gwas.git
-cd jbrowse-plugin-gwas
-yarn
-yarn start
-```
-
-Then open JBrowse Web to (assuming it is running on port 3000):
-
-http://localhost:3000/?config=http://localhost:9000/config.json
-
-#### Demo
-
-https://s3.amazonaws.com/jbrowse.org/code/jb2/master/index.html?config=https%3A%2F%2Funpkg.com%2Fjbrowse-plugin-gwas%2Fdist%2Fconfig.json&session=share-iehjT6AoHd&password=lZS7v
-
-#### Production
-
-Add to the "plugins" of your JBrowse Web config:
+Add to the "plugins" of your JBrowse Web config. The unpkg CDN should be stable, or you can download the js file to your server
 
 ```json
 {
@@ -50,40 +22,12 @@ Add to the "plugins" of your JBrowse Web config:
 }
 ```
 
-### In [`@jbrowse/react-linear-view`](https://www.npmjs.com/package/@jbrowse/react-linear-genome-view)
+#### Demo
 
-```tsx
-import React from "react";
-import "fontsource-roboto";
-import {
-  createViewState,
-  createJBrowseTheme,
-  JBrowseLinearGenomeView,
-  ThemeProvider,
-} from "@jbrowse/react-linear-view";
-import GWAS from "jbrowse-plugin-gwas";
+https://s3.amazonaws.com/jbrowse.org/code/jb2/master/index.html?config=https%3A%2F%2Funpkg.com%2Fjbrowse-plugin-gwas%2Fdist%2Fconfig.json&session=share-iehjT6AoHd&password=lZS7v
 
-const theme = createJBrowseTheme();
+Loading cross origin configs produces a warning but this link is safe
 
-function View() {
-  const state = createViewState({
-    assembly: {
-      /* assembly */
-    },
-    tracks: [
-      /* tracks */
-    ],
-    plugins: [GWAS],
-  });
-  return (
-    <ThemeProvider theme={theme}>
-      <JBrowseLinearGenomeView viewState={state} />
-    </ThemeProvider>
-  );
-}
-```
+### For use in jbrowse/react-linear-genome-view
 
-## Screenshot
-
-![](img/1.png)
-![](img/2.png)
+See [DEVELOPMENT](DEVELOPMENT.md)
