@@ -11,7 +11,7 @@ Then open JBrowse Web to (assuming it is running on port 3000):
 
 http://localhost:3000/?config=http://localhost:9000/config.json
 
-## If you want to use in [@jbrowse/react-linear-view](https://www.npmjs.com/package/@jbrowse/react-linear-genome-view)
+## If you want to use in [@jbrowse/react-linear-genome-view](https://www.npmjs.com/package/@jbrowse/react-linear-genome-view)
 
 ```
 yarn add jbrowse-plugin-gwas
@@ -27,7 +27,7 @@ import {
   createJBrowseTheme,
   JBrowseLinearGenomeView,
   ThemeProvider,
-} from "@jbrowse/react-linear-view";
+} from "@jbrowse/react-linear-genome-view";
 import GWAS from "jbrowse-plugin-gwas";
 
 const theme = createJBrowseTheme();
