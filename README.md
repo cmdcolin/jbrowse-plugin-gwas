@@ -24,7 +24,7 @@ Add to the "plugins" of your JBrowse Web config. The unpkg CDN should be stable,
 
 #### Demo
 
-https://s3.amazonaws.com/jbrowse.org/code/jb2/master/index.html?config=https%3A%2F%2Funpkg.com%2Fjbrowse-plugin-gwas%2Fdist%2Fconfig.json&session=share-iehjT6AoHd&password=lZS7v
+https://s3.amazonaws.com/jbrowse.org/code/jb2/main/index.html?config=https%3A%2F%2Funpkg.com%2Fjbrowse-plugin-gwas%2Fdist%2Fconfig.json&session=share-iehjT6AoHd&password=lZS7v
 
 Loading cross origin configs produces a warning but this link is safe
 
