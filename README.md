@@ -22,6 +22,8 @@ Add to the "plugins" of your JBrowse Web config. The unpkg CDN should be stable,
 }
 ```
 
+This plugin is currently quite basic, and there is no mouseover interactivity or drawn labels on features
+
 #### Demo
 
 https://s3.amazonaws.com/jbrowse.org/code/jb2/main/index.html?config=https%3A%2F%2Funpkg.com%2Fjbrowse-plugin-gwas%2Fdist%2Fconfig.json&session=share-iehjT6AoHd&password=lZS7v
