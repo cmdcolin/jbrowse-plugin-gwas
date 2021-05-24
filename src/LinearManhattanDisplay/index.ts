@@ -90,6 +90,14 @@ export function stateModelFactory(
         get needsScalebar() {
           return true;
         },
+
+        get trackMenuItems() {
+          return [
+            {
+              label: "Basic extra item",
+            },
+          ];
+        },
       })),
   );
 }
