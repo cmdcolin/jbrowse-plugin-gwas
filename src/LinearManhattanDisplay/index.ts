@@ -1,4 +1,5 @@
 import PluginManager from "@jbrowse/core/PluginManager";
+import { getParentRenderProps } from "@jbrowse/core/util/tracks";
 
 export function configSchemaFactory(pluginManager: PluginManager) {
   const { types } = pluginManager.lib["mobx-state-tree"];
@@ -76,30 +77,44 @@ export function stateModelFactory(
   ) as import("@jbrowse/plugin-wiggle").default;
   //@ts-ignore
   const { linearWiggleDisplayModelFactory } = WigglePlugin.exports;
-  return types.compose(
-    "LinearManhattanDisplay",
-    linearWiggleDisplayModelFactory(pluginManager, configSchema),
-    types
-      .model({
+  return types
+    .compose(
+      "LinearManhattanDisplay",
+      linearWiggleDisplayModelFactory(pluginManager, configSchema),
+      types.model({
         type: types.literal("LinearManhattanDisplay"),
-      })
-      .views(() => ({
-        get rendererTypeName() {
-          return "LinearManhattanRenderer";
-        },
-        get needsScalebar() {
-          return true;
-        },
+        customValue: types.optional(types.number, 3),
+      }),
+    )
+    .actions(self => ({
+      setValue(val: number) {
+        self.customValue = val;
+      },
+    }))
+    .views(self => ({
+      get rendererTypeName() {
+        return "LinearManhattanRenderer";
+      },
+      get needsScalebar() {
+        return true;
+      },
 
-        get trackMenuItems() {
-          return [
-            {
-              label: "Basic extra item",
-            },
-          ];
-        },
-      })),
-  );
+      get trackMenuItems() {
+        return [
+          {
+            label: "Basic extra item",
+            onClick: () => self.setValue(5),
+          },
+        ];
+      },
+      get renderProps() {
+        return {
+          ...self.composedRenderProps,
+          ...getParentRenderProps(self),
+          value: self.customValue,
+        };
+      },
+    }));
 }
 
 export type LinearManhattanDisplayModel = ReturnType<typeof stateModelFactory>;
