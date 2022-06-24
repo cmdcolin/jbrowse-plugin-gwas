@@ -15,7 +15,7 @@ Add to the "plugins" of your JBrowse Web config. The unpkg CDN should be stable,
 {
   "plugins": [
     {
-      "name": "gwas",
+      "name": "GWAS",
       "url": "https://unpkg.com/jbrowse-plugin-gwas/dist/jbrowse-plugin-gwas.umd.production.min.js"
     }
   ]
