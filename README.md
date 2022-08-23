@@ -9,11 +9,11 @@ Plugin for displaying GWAS results such as manhattan plot renderings
 
 ## Data format
 
-jbrowse-plugin-gwas will render any features with a "score". A common format is a BED-like file, perhaps with tabix added. Example with plain BED
+jbrowse-plugin-gwas will render any features with a "score". A common format is a BED-like file, perhaps with tabix added. Example with plain BED, where the score is in column 5
 
 ```
-chr22 1000 5000 rs123 960
-chr22 2000 6000 rs456 900
+chr22 1000 5000 rs123 84.141
+chr22 2000 6000 rs456 40.12312
 ```
 
 Sometimes, the file format is not a strict BED but something with just one coordinate instead of a start and end. Example with BED-like data (only one coordinate column)
