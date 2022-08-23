@@ -1,5 +1,6 @@
 import PluginManager from "@jbrowse/core/PluginManager";
 import { readConfObject } from "@jbrowse/core/configuration";
+import { featureSpanPx } from "@jbrowse/core/util";
 
 export default function rendererFactory(pluginManager: PluginManager) {
   const WigglePlugin = pluginManager.getPlugin(
@@ -10,8 +11,6 @@ export default function rendererFactory(pluginManager: PluginManager) {
     WiggleBaseRenderer,
     //@ts-ignore
   } = WigglePlugin.exports;
-
-  const { featureSpanPx } = pluginManager.lib["@jbrowse/core/util"];
 
   return class ManhattanPlotRenderer extends WiggleBaseRenderer {
     draw(ctx: CanvasRenderingContext2D, props: any) {

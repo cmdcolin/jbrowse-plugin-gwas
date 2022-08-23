@@ -1,11 +1,12 @@
 import Plugin from "@jbrowse/core/Plugin";
 import PluginManager from "@jbrowse/core/PluginManager";
+import DisplayType from "@jbrowse/core/pluggableElementTypes/DisplayType";
 import rendererFactory, {
-  configSchemaFactory as linearManhattanRendererConfigSchemaFactory,
+  configSchema as rendererConfigSchema,
 } from "./LinearManhattanRenderer";
 import {
-  configSchemaFactory as linearManhattanDisplayConfigSchemaFactory,
-  stateModelFactory as linearManhattanDisplayModelFactory,
+  configSchemaFactory as displayConfigSchemaFactory,
+  stateModelFactory as displayModelFactory,
 } from "./LinearManhattanDisplay";
 
 export default class AlignmentsPlugin extends Plugin {
@@ -15,8 +16,7 @@ export default class AlignmentsPlugin extends Plugin {
     const WigglePlugin = pluginManager.getPlugin(
       "WigglePlugin",
     ) as import("@jbrowse/plugin-wiggle").default;
-    const DisplayType =
-      pluginManager.lib["@jbrowse/core/pluggableElementTypes/DisplayType"];
+
     const {
       LinearWiggleDisplayReactComponent,
       XYPlotRendererReactComponent,
@@ -24,16 +24,11 @@ export default class AlignmentsPlugin extends Plugin {
     } = WigglePlugin.exports;
 
     pluginManager.addDisplayType(() => {
-      const configSchema = linearManhattanDisplayConfigSchemaFactory(
-        pluginManager,
-      );
+      const configSchema = displayConfigSchemaFactory(pluginManager);
       return new DisplayType({
         name: "LinearManhattanDisplay",
         configSchema,
-        stateModel: linearManhattanDisplayModelFactory(
-          pluginManager,
-          configSchema,
-        ),
+        stateModel: displayModelFactory(pluginManager, configSchema),
         trackType: "FeatureTrack",
         viewType: "LinearGenomeView",
         ReactComponent: LinearWiggleDisplayReactComponent,
@@ -43,9 +38,7 @@ export default class AlignmentsPlugin extends Plugin {
     pluginManager.addRendererType(() => {
       //@ts-ignore
       const ManhattanRenderer = new rendererFactory(pluginManager);
-      const configSchema = linearManhattanRendererConfigSchemaFactory(
-        pluginManager,
-      );
+      const configSchema = rendererConfigSchema;
       return new ManhattanRenderer({
         name: "LinearManhattanRenderer",
         ReactComponent: XYPlotRendererReactComponent,
