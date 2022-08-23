@@ -1,3 +1,7 @@
+# v1.0.4
+
+Make the code always try to render (never produce the force load)
+
 # v1.0.3
 
 - Fix for v1.1.0 of jbrowse-web requires passing pluginManager to renderer constructor
