@@ -9,6 +9,9 @@ export function configSchemaFactory(pluginManager: PluginManager) {
   //@ts-ignore
   const { baseLinearDisplayConfigSchema } = LGVPlugin.exports;
 
+  const LinearManhattanRendererConfigSchema = pluginManager.getRendererType(
+    "LinearManhattanRenderer",
+  ).configSchema;
   return ConfigurationSchema(
     "LinearManhattanDisplay",
     {
@@ -58,6 +61,9 @@ export function configSchemaFactory(pluginManager: PluginManager) {
         model: types.enumeration("Rendering", ["density", "xyplot", "line"]),
         defaultValue: "xyplot",
       },
+      renderers: ConfigurationSchema("RenderersConfiguration", {
+        LinearManhattanRenderer: LinearManhattanRendererConfigSchema,
+      }),
     },
     { baseConfiguration: baseLinearDisplayConfigSchema, explicitlyTyped: true },
   );

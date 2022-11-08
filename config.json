@@ -61,6 +61,37 @@
           "type": "LinearManhattanDisplay"
         }
       ]
+    },
+    {
+      "type": "FeatureTrack",
+      "trackId": "gwas_track_custom_color",
+      "name": "GWAS (custom color)",
+      "category": ["Annotation"],
+      "assemblyNames": ["hg19"],
+      "adapter": {
+        "type": "BedTabixAdapter",
+        "scoreColumn": "neg_log_pvalue",
+        "bedGzLocation": {
+          "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
+        },
+        "index": {
+          "location": {
+            "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz.tbi"
+          },
+          "indexType": "TBI"
+        }
+      },
+      "displays": [
+        {
+          "displayId": "gwas_display_custom_color",
+          "type": "LinearManhattanDisplay",
+          "renderers": {
+            "LinearManhattanRenderer": {
+              "color": "green"
+            }
+          }
+        }
+      ]
     }
   ]
 }
