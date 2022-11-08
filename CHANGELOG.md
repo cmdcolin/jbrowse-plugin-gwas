@@ -1,6 +1,10 @@
+# v1.0.5
+
+- Fix ability to configure the renderer on the display, see sample config.json for custom coloring
+
 # v1.0.4
 
-Make the code always try to render (never produce the force load)
+- Make the code always try to render (never produce the force load)
 
 # v1.0.3
 
