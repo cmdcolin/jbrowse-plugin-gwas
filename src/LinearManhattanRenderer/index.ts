@@ -1,5 +1,5 @@
-export { default } from "./LinearManhattanRenderer";
 import { ConfigurationSchema } from "@jbrowse/core/configuration";
+export { default } from "./LinearManhattanRenderer";
 
 export const configSchema = ConfigurationSchema(
   "LinearManhattanRenderer",
