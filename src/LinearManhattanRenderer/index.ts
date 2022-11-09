@@ -8,6 +8,7 @@ export const configSchema = ConfigurationSchema(
       type: "color",
       description: "the color of the marks",
       defaultValue: "darkblue",
+      contextVariable: ["feature"],
     },
   },
   { explicitlyTyped: true },
