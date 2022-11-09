@@ -51,8 +51,7 @@
         "index": {
           "location": {
             "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz.tbi"
-          },
-          "indexType": "TBI"
+          }
         }
       },
       "displays": [
@@ -77,8 +76,7 @@
         "index": {
           "location": {
             "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz.tbi"
-          },
-          "indexType": "TBI"
+          }
         }
       },
       "displays": [
@@ -88,6 +86,36 @@
           "renderers": {
             "LinearManhattanRenderer": {
               "color": "green"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "FeatureTrack",
+      "trackId": "gwas_track_custom_color_callback",
+      "name": "GWAS (custom color callback)",
+      "category": ["Annotation"],
+      "assemblyNames": ["hg19"],
+      "adapter": {
+        "type": "BedTabixAdapter",
+        "scoreColumn": "neg_log_pvalue",
+        "bedGzLocation": {
+          "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
+        },
+        "index": {
+          "location": {
+            "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz.tbi"
+          }
+        }
+      },
+      "displays": [
+        {
+          "displayId": "gwas_display_custom_color_callback",
+          "type": "LinearManhattanDisplay",
+          "renderers": {
+            "LinearManhattanRenderer": {
+              "color": "jexl:'hsl('+get(feature,'start')/100000+',50%,50%)'"
             }
           }
         }

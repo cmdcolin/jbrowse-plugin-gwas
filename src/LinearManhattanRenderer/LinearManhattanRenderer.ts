@@ -36,7 +36,8 @@ export default function rendererFactory(pluginManager: PluginManager) {
       for (const feature of features.values()) {
         const [leftPx] = featureSpanPx(feature, region, bpPerPx);
         const score = feature.get("score") as number;
-        ctx.fillStyle = readConfObject(config, "color", [feature]);
+        // @ts-ignore
+        ctx.fillStyle = readConfObject(config, "color", { feature });
         ctx.beginPath();
         ctx.arc(leftPx, toY(score), 2, 0, 2 * Math.PI);
         ctx.fill();
