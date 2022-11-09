@@ -1,3 +1,7 @@
+# v1.0.6
+
+- Fix passing feature context variable to the color callback
+
 # v1.0.5
 
 - Fix ability to configure the renderer on the display, see sample config.json for custom coloring
