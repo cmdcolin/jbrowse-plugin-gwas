@@ -3,6 +3,17 @@
   "version": "1.0.6",
   "description": "JBrowse 2 GWAS API plugin",
   "repository": "github:cmdcolin/jbrowse-plugin-gwas",
+  "config": {
+    "port": 9000,
+    "browse": {
+      "port": 8999
+    },
+    "jbrowse": {
+      "plugin": {
+        "name": "GWAS"
+      }
+    }
+  },
   "jbrowse-plugin": {
     "name": "GWAS"
   },

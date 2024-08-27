@@ -9,7 +9,7 @@ import {
   stateModelFactory as displayModelFactory,
 } from "./LinearManhattanDisplay";
 
-export default class AlignmentsPlugin extends Plugin {
+export default class GWASPlugin extends Plugin {
   name = "GWASPlugin";
 
   install(pluginManager: PluginManager) {

@@ -1,22 +1,4 @@
 {
-  "configuration": {
-    "theme": {
-      "palette": {
-        "primary": {
-          "main": "#00008b"
-        },
-        "secondary": {
-          "main": "#708090"
-        },
-        "tertiary": {
-          "main": "#add8e6"
-        },
-        "quaternary": {
-          "main": "#aaa"
-        }
-      }
-    }
-  },
   "plugins": [
     {
       "name": "GWAS",
