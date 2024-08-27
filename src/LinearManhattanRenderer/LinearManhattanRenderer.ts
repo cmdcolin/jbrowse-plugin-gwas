@@ -9,11 +9,10 @@ export default function rendererFactory(pluginManager: PluginManager) {
   const {
     utils: { getScale },
     WiggleBaseRenderer,
-    //@ts-ignore
   } = WigglePlugin.exports;
 
   return class ManhattanPlotRenderer extends WiggleBaseRenderer {
-    draw(ctx: CanvasRenderingContext2D, props: any) {
+    async draw(ctx: CanvasRenderingContext2D, props: any) {
       const {
         features,
         regions,
@@ -36,7 +35,6 @@ export default function rendererFactory(pluginManager: PluginManager) {
       for (const feature of features.values()) {
         const [leftPx] = featureSpanPx(feature, region, bpPerPx);
         const score = feature.get("score") as number;
-        // @ts-ignore
         ctx.fillStyle = readConfObject(config, "color", { feature });
         ctx.beginPath();
         ctx.arc(leftPx, toY(score), 2, 0, 2 * Math.PI);
@@ -53,6 +51,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
           ctx.stroke();
         });
       }
+      return undefined;
     }
   };
 }

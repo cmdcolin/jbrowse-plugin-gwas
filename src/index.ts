@@ -9,7 +9,7 @@ import {
   stateModelFactory as displayModelFactory,
 } from "./LinearManhattanDisplay";
 
-export default class AlignmentsPlugin extends Plugin {
+export default class GWASPlugin extends Plugin {
   name = "GWASPlugin";
 
   install(pluginManager: PluginManager) {
@@ -17,11 +17,8 @@ export default class AlignmentsPlugin extends Plugin {
       "WigglePlugin",
     ) as import("@jbrowse/plugin-wiggle").default;
 
-    const {
-      LinearWiggleDisplayReactComponent,
-      XYPlotRendererReactComponent,
-      //@ts-ignore
-    } = WigglePlugin.exports;
+    const { LinearWiggleDisplayReactComponent, XYPlotRendererReactComponent } =
+      WigglePlugin.exports;
 
     pluginManager.addDisplayType(() => {
       const configSchema = displayConfigSchemaFactory(pluginManager);
@@ -36,7 +33,7 @@ export default class AlignmentsPlugin extends Plugin {
     });
 
     pluginManager.addRendererType(() => {
-      //@ts-ignore
+      //@ts-expect-error
       const ManhattanRenderer = new rendererFactory(pluginManager);
       const configSchema = rendererConfigSchema;
       return new ManhattanRenderer({

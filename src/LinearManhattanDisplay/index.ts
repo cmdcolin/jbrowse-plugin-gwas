@@ -9,7 +9,6 @@ export function stateModelFactory(
   const WigglePlugin = pluginManager.getPlugin(
     "WigglePlugin",
   ) as import("@jbrowse/plugin-wiggle").default;
-  //@ts-ignore
   const { linearWiggleDisplayModelFactory } = WigglePlugin.exports;
   return types.compose(
     "LinearManhattanDisplay",
