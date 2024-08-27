@@ -11,14 +11,12 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "clean": "rimraf dist",
-    "start": "tsdx watch --verbose --noClean --format umd --name JBrowsePluginGWAS --onFirstSuccess \"yarn serve --cors --listen 9000 .\"",
-    "prebuild": "npm run clean",
-    "build": "tsdx build --format cjs,esm,umd --name JBrowsePluginGWAS && cp distconfig.json dist/config.json",
-    "test": "tsdx test",
-    "lint": "tsdx lint",
-    "prepare": "npm run build",
+    "start": "npm-run-all --sequential clean --parallel start:*",
+    "start:watch": "cross-env JB_NPM=false NODE_ENV=development rollup --config --watch --bundleConfigAsCjs",
+    "start:server": "serve --cors --listen 9000 .",
+    "prebuild": "npm-run-all clean",
+    "build": "rollup --config --bundleConfigAsCjs",
     "prepublishOnly": "yarn test",
-    "postinstall": "jbrowse-plugin-postinstall",
     "postversion": "git push --follow-tags"
   },
   "files": [
@@ -38,22 +36,28 @@
     "@jbrowse/core": "^1.0.3"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.10.4",
-    "@jbrowse/core": "^1.0.3",
-    "@jbrowse/development-tools": "^1.0.3",
-    "@jbrowse/plugin-linear-genome-view": "^1.0.3",
-    "@jbrowse/plugin-wiggle": "^1.0.3",
-    "@material-ui/core": "^4.9.13",
-    "@material-ui/lab": "^4.0.0-alpha.45",
-    "@types/react": "^17.0.0",
-    "mobx": "^5.0.0",
-    "mobx-react": "^6.0.0",
-    "mobx-state-tree": "3.14.1",
-    "react": "^16.8.0",
-    "rimraf": "^3.0.2",
-    "rxjs": "^6.0.0",
-    "serve": "^11.3.2",
-    "tslib": "^2.0.3",
-    "typescript": "^4.1.3"
+    "@babel/preset-react": "^7.24.7",
+    "@jbrowse/core": "^2.13.1",
+    "@jbrowse/development-tools": "^2.1.1",
+    "@jbrowse/plugin-linear-genome-view": "^2.13.1",
+    "@jbrowse/plugin-wiggle": "^2.13.1",
+    "@mui/material": "^5.0.0",
+    "@types/react": "^18.3.4",
+    "cross-env": "^7.0.3",
+    "mobx": "^6.13.1",
+    "mobx-react": "^9.1.1",
+    "mobx-state-tree": "^5.0.0",
+    "npm-run-all": "^4.1.5",
+    "react": "^18.3.1",
+    "rimraf": "^6.0.1",
+    "rollup": "^3.0.0",
+    "rxjs": "^7.8.1",
+    "serve": "^14.2.3",
+    "tslib": "^2.7.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "react-dom": "^18.3.1",
+    "tss-react": "^4.9.12"
   }
 }
