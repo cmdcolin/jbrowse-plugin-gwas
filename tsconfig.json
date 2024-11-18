@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es5",
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
@@ -16,8 +16,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     // noUnused* overlap with @typescript-eslint/no-unused-vars, can disable if duplicative
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
     // use Node's module resolution algorithm, instead of the legacy TS one
     "moduleResolution": "node",
     // transpile JSX to React.createElement
@@ -28,10 +28,17 @@
     "skipLibCheck": true,
     // error out if import and file system have a casing mismatch. Recommended by TS
     "forceConsistentCasingInFileNames": true,
-    // `tsdx build` ignores this option, but it is commonly used when type-checking separately with `tsc`
+    // `rollup` ignores this option, but it is commonly used when type-checking separately with `tsc`
     "noEmit": true,
+    // Can remove this if only using TypeScript
     "allowJs": true,
+    // Allow importing JSON files
     "resolveJsonModule": false
+  },
+  // Jest uses ts-node to load the jest.config.ts file
+  "ts-node": {
+    "transpileOnly": true,
+    "project": "./tsconfig.test.json"
   },
   "include": ["src"],
   "exclude": ["**/dist/"]

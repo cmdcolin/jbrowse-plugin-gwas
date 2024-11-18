@@ -1,34 +1,33 @@
-import PluginManager from "@jbrowse/core/PluginManager";
-export { configSchemaFactory } from "./configSchemaFactory";
+import type PluginManager from '@jbrowse/core/PluginManager'
+export { configSchemaFactory } from './configSchemaFactory'
+import type WigglePlugin from '@jbrowse/plugin-wiggle'
 
 export function stateModelFactory(
   pluginManager: PluginManager,
   configSchema: any,
 ) {
-  const { types } = pluginManager.lib["mobx-state-tree"];
-  const WigglePlugin = pluginManager.getPlugin(
-    "WigglePlugin",
-  ) as import("@jbrowse/plugin-wiggle").default;
-  const { linearWiggleDisplayModelFactory } = WigglePlugin.exports;
+  const { types } = pluginManager.lib['mobx-state-tree']
+  const WigglePlugin = pluginManager.getPlugin('WigglePlugin') as WigglePlugin
+  const { linearWiggleDisplayModelFactory } = WigglePlugin.exports
   return types.compose(
-    "LinearManhattanDisplay",
+    'LinearManhattanDisplay',
     linearWiggleDisplayModelFactory(pluginManager, configSchema),
     types
       .model({
-        type: types.literal("LinearManhattanDisplay"),
+        type: types.literal('LinearManhattanDisplay'),
       })
       .views(() => ({
         get rendererTypeName() {
-          return "LinearManhattanRenderer";
+          return 'LinearManhattanRenderer'
         },
         get needsScalebar() {
-          return true;
+          return true
         },
         get regionTooLarge() {
-          return false;
+          return false
         },
       })),
-  );
+  )
 }
 
-export type LinearManhattanDisplayModel = ReturnType<typeof stateModelFactory>;
+export type LinearManhattanDisplayModel = ReturnType<typeof stateModelFactory>
