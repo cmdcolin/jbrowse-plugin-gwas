@@ -1,3 +1,8 @@
+# v2.0.0
+
+- Add clickable features
+- Add click map
+
 # v1.0.6
 
 - Fix passing feature context variable to the color callback
