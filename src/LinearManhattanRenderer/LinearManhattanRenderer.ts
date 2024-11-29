@@ -3,6 +3,20 @@ import { readConfObject } from '@jbrowse/core/configuration'
 import { featureSpanPx } from '@jbrowse/core/util'
 import type WigglePlugin from '@jbrowse/plugin-wiggle'
 
+export function checkStopToken(stopToken?: string) {
+  if (stopToken !== undefined) {
+    const xhr = new XMLHttpRequest()
+
+    // synchronous XHR usage to check the token
+    xhr.open('GET', stopToken, false)
+    try {
+      xhr.send(null)
+    } catch (e) {
+      throw new Error('aborted')
+    }
+  }
+}
+
 export default function rendererFactory(pluginManager: PluginManager) {
   const WigglePlugin = pluginManager.getPlugin('WigglePlugin') as WigglePlugin
   const {
@@ -21,6 +35,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
         height: unadjustedHeight,
         displayCrossHatches,
         ticks: { values },
+        stopToken,
       } = props
       const [region] = regions
       const YSCALEBAR_LABEL_OFFSET = 5
@@ -31,7 +46,13 @@ export default function rendererFactory(pluginManager: PluginManager) {
       const scale = getScale(opts)
       const toY = (n: number) => height - scale(n) + YSCALEBAR_LABEL_OFFSET
 
+      let start = performance.now()
+      checkStopToken(stopToken)
       for (const feature of features.values()) {
+        if (performance.now() - start > 200) {
+          checkStopToken(stopToken)
+          start = performance.now()
+        }
         const [leftPx] = featureSpanPx(feature, region, bpPerPx)
         const score = feature.get('score') as number
         ctx.fillStyle = readConfObject(config, 'color', { feature })

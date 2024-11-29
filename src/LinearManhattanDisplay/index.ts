@@ -1,5 +1,5 @@
-import type PluginManager from '@jbrowse/core/PluginManager'
 export { configSchemaFactory } from './configSchemaFactory'
+import type PluginManager from '@jbrowse/core/PluginManager'
 import type WigglePlugin from '@jbrowse/plugin-wiggle'
 
 export function stateModelFactory(
