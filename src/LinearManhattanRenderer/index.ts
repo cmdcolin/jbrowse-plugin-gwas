@@ -1,15 +1,18 @@
-import { ConfigurationSchema } from '@jbrowse/core/configuration'
-export { default } from './LinearManhattanRenderer'
+import rendererFactory from './LinearManhattanRenderer'
+import LinearManhattanRendering from './LinearManhattanRendering'
+import { configSchema } from './configSchema'
 
-export const configSchema = ConfigurationSchema(
-  'LinearManhattanRenderer',
-  {
-    color: {
-      type: 'color',
-      description: 'the color of the marks',
-      defaultValue: 'darkblue',
-      contextVariable: ['feature'],
-    },
-  },
-  { explicitlyTyped: true },
-)
+import type PluginManager from '@jbrowse/core/PluginManager'
+
+export default function LinearManhattanRendererF(pluginManager: PluginManager) {
+  pluginManager.addRendererType(() => {
+    // @ts-expect-error
+    const LinearManhattanRenderer = new rendererFactory(pluginManager)
+    return new LinearManhattanRenderer({
+      name: 'LinearManhattanRenderer',
+      ReactComponent: LinearManhattanRendering,
+      configSchema,
+      pluginManager,
+    })
+  })
+}

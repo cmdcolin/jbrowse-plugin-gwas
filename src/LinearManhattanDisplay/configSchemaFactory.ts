@@ -1,6 +1,7 @@
-import type PluginManager from '@jbrowse/core/PluginManager'
-import { types } from 'mobx-state-tree'
 import { ConfigurationSchema } from '@jbrowse/core/configuration'
+import { types } from 'mobx-state-tree'
+
+import type PluginManager from '@jbrowse/core/PluginManager'
 import type LGVPlugin from '@jbrowse/plugin-linear-genome-view'
 
 export function configSchemaFactory(pluginManager: PluginManager) {

@@ -1,33 +1,25 @@
+import { DisplayType } from '@jbrowse/core/pluggableElementTypes'
+
+import { configSchemaFactory } from './configSchemaFactory'
+import { stateModelFactory } from './stateModelFactory'
+
 import type PluginManager from '@jbrowse/core/PluginManager'
-export { configSchemaFactory } from './configSchemaFactory'
 import type WigglePlugin from '@jbrowse/plugin-wiggle'
 
-export function stateModelFactory(
-  pluginManager: PluginManager,
-  configSchema: any,
-) {
-  const { types } = pluginManager.lib['mobx-state-tree']
+export default function LinearManhattanDisplayF(pluginManager: PluginManager) {
   const WigglePlugin = pluginManager.getPlugin('WigglePlugin') as WigglePlugin
-  const { linearWiggleDisplayModelFactory } = WigglePlugin.exports
-  return types.compose(
-    'LinearManhattanDisplay',
-    linearWiggleDisplayModelFactory(pluginManager, configSchema),
-    types
-      .model({
-        type: types.literal('LinearManhattanDisplay'),
-      })
-      .views(() => ({
-        get rendererTypeName() {
-          return 'LinearManhattanRenderer'
-        },
-        get needsScalebar() {
-          return true
-        },
-        get regionTooLarge() {
-          return false
-        },
-      })),
-  )
-}
 
-export type LinearManhattanDisplayModel = ReturnType<typeof stateModelFactory>
+  const { LinearWiggleDisplayReactComponent } = WigglePlugin.exports
+
+  pluginManager.addDisplayType(() => {
+    const configSchema = configSchemaFactory(pluginManager)
+    return new DisplayType({
+      name: 'LinearManhattanDisplay',
+      configSchema,
+      stateModel: stateModelFactory(pluginManager, configSchema),
+      trackType: 'FeatureTrack',
+      viewType: 'LinearGenomeView',
+      ReactComponent: LinearWiggleDisplayReactComponent,
+    })
+  })
+}
