@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs', 'rollup.config.js', 'dist/*'],
+    ignores: ['eslint.config.mjs', 'esbuild.mjs', 'dist/*'],
   },
   {
     languageOptions: {

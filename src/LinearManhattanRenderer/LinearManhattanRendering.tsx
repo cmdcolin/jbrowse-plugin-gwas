@@ -1,10 +1,11 @@
-import React, { useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 
 import { PrerenderedCanvas } from '@jbrowse/core/ui'
-import { YSCALEBAR_LABEL_OFFSET, getScale } from '@jbrowse/plugin-wiggle'
+import { SimpleFeature } from '@jbrowse/core/util'
 import { observer } from 'mobx-react'
+import RBush from 'rbush'
 
-import type { Feature } from '@jbrowse/core/util'
+import type { Feature, SimpleFeatureSerialized } from '@jbrowse/core/util'
 import type { Region } from '@jbrowse/core/util/types'
 
 const LinearManhattanRendering = observer(function (props: {
@@ -15,56 +16,44 @@ const LinearManhattanRendering = observer(function (props: {
   height: number
   blockKey: string
   scaleOpts: any
+  clickMap: any
   onMouseLeave?: (event: React.MouseEvent) => void
   onMouseMove?: (event: React.MouseEvent, arg?: string) => void
   onFeatureClick?: (event: React.MouseEvent, arg?: string) => void
 }) {
-  const {
-    regions,
-    features,
-    bpPerPx,
-    width,
-    height,
-    onMouseLeave,
-    onMouseMove,
-    onFeatureClick,
-    scaleOpts,
-  } = props
-  const region = regions[0]!
+  const { height, onMouseLeave, onMouseMove, onFeatureClick, clickMap } = props
+  const clickMap2 = useMemo(() => {
+    return new RBush<{ feature: SimpleFeatureSerialized }>().fromJSON(clickMap)
+  }, [clickMap])
   const ref = useRef<HTMLDivElement>(null)
 
-  function getFeatureUnderMouse(eventClientX: number) {
-    const opts = { ...scaleOpts, range: [0, height] }
-    const scale = getScale(opts)
-    const toY = (n: number) => height - scale(n) + YSCALEBAR_LABEL_OFFSET
+  function getFeatureUnderMouse(eventClientX: number, eventClientY: number) {
     // calculates feature under mouse
-    let offset = 0
+    let offsetX = 0
+    let offsetY = 0
     if (ref.current) {
-      offset = ref.current.getBoundingClientRect().left
+      const r = ref.current.getBoundingClientRect()
+      offsetX = eventClientX - r.left
+      offsetY = eventClientY - r.top
     }
-    const offsetX = eventClientX - offset
-    const px = region.reversed ? width - offsetX : offsetX
-    const clientBp = region.start + bpPerPx * px
-    let featureUnderMouse: Feature | undefined
-    for (const feature of features.values()) {
-      const y = toY(feature.get('score'))
-      console.log({ y })
-      if (
-        clientBp <= feature.get('end') + bpPerPx &&
-        clientBp >= feature.get('start')
-      ) {
-        featureUnderMouse = feature
-        break
-      }
-    }
-    return featureUnderMouse
+    const ret = clickMap2.search({
+      minX: offsetX,
+      minY: offsetY,
+      maxX: offsetX + 3,
+      maxY: offsetY + 3,
+    })
+    return ret[0] ? new SimpleFeature(ret[0].feature) : undefined
   }
   return (
     <div
       ref={ref}
       data-testid="wiggle-rendering-test"
-      onMouseMove={e => onMouseMove?.(e, getFeatureUnderMouse(e.clientX)?.id())}
-      onClick={e => onFeatureClick?.(e, getFeatureUnderMouse(e.clientX)?.id())}
+      onMouseMove={e =>
+        onMouseMove?.(e, getFeatureUnderMouse(e.clientX, e.clientY)?.id())
+      }
+      onClick={e =>
+        onFeatureClick?.(e, getFeatureUnderMouse(e.clientX, e.clientY)?.id())
+      }
       onMouseLeave={e => onMouseLeave?.(e)}
       style={{
         overflow: 'visible',

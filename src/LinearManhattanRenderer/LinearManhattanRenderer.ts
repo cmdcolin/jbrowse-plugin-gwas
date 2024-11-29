@@ -1,5 +1,6 @@
 import { readConfObject } from '@jbrowse/core/configuration'
 import { featureSpanPx } from '@jbrowse/core/util'
+import RBush from 'rbush'
 
 import type PluginManager from '@jbrowse/core/PluginManager'
 import type WigglePlugin from '@jbrowse/plugin-wiggle'
@@ -43,6 +44,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
       const height = unadjustedHeight - YSCALEBAR_LABEL_OFFSET * 2
       const opts = { ...scaleOpts, range: [0, height] }
       const width = (region.end - region.start) / bpPerPx
+      const rbush = new RBush<any>()
 
       const scale = getScale(opts)
       const toY = (n: number) => height - scale(n) + YSCALEBAR_LABEL_OFFSET
@@ -58,7 +60,15 @@ export default function rendererFactory(pluginManager: PluginManager) {
         const score = feature.get('score') as number
         ctx.fillStyle = readConfObject(config, 'color', { feature })
         ctx.beginPath()
-        ctx.arc(leftPx, toY(score), 2, 0, 2 * Math.PI)
+        const y = toY(score)
+        ctx.arc(leftPx, y, 2, 0, 2 * Math.PI)
+        rbush.insert({
+          minX: leftPx,
+          minY: y,
+          maxX: leftPx + 4,
+          maxY: y + 4,
+          feature: feature.toJSON(),
+        })
         ctx.fill()
       }
 
@@ -72,7 +82,9 @@ export default function rendererFactory(pluginManager: PluginManager) {
           ctx.stroke()
         })
       }
-      return { originalFeatures: features }
+      return {
+        clickMap: rbush.toJSON(),
+      }
     }
   }
 }

@@ -2,7 +2,7 @@
   "plugins": [
     {
       "name": "GWAS",
-      "url": "http://localhost:9000/dist/jbrowse-plugin-gwas.umd.development.js"
+      "url": "http://localhost:9000/dist/out.js"
     }
   ],
   "assemblies": [

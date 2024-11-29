@@ -1,23 +1,8 @@
-import { ConfigurationSchema } from '@jbrowse/core/configuration'
+import rendererFactory from './LinearManhattanRenderer'
 import LinearManhattanRendering from './LinearManhattanRendering'
+import { configSchema } from './configSchema'
 
 import type PluginManager from '@jbrowse/core/PluginManager'
-
-const configSchema = ConfigurationSchema(
-  'LinearManhattanRenderer',
-  {
-    /**
-     * #slot
-     */
-    color: {
-      type: 'color',
-      description: 'the color of the marks',
-      defaultValue: 'darkblue',
-      contextVariable: ['feature'],
-    },
-  },
-  { explicitlyTyped: true },
-)
 
 export default function LinearManhattanRendererF(pluginManager: PluginManager) {
   pluginManager.addRendererType(() => {

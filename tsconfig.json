@@ -34,7 +34,7 @@
     "allowJs": true,
     // Allow importing JSON files
     "resolveJsonModule": false,
-    "noUncheckedIndexedAccess":true
+    "noUncheckedIndexedAccess": true
   },
   "include": ["src"],
   "exclude": ["**/dist/"]
