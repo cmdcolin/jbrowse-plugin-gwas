@@ -20,17 +20,17 @@ yarn add jbrowse-plugin-gwas
 And then load statically via an import
 
 ```tsx
-import React from "react";
-import "fontsource-roboto";
+import React from 'react'
+import 'fontsource-roboto'
 import {
   createViewState,
   createJBrowseTheme,
   JBrowseLinearGenomeView,
   ThemeProvider,
-} from "@jbrowse/react-linear-genome-view";
-import GWAS from "jbrowse-plugin-gwas";
+} from '@jbrowse/react-linear-genome-view'
+import GWAS from 'jbrowse-plugin-gwas'
 
-const theme = createJBrowseTheme();
+const theme = createJBrowseTheme()
 
 function View() {
   const state = createViewState({
@@ -41,11 +41,11 @@ function View() {
       /* tracks */
     ],
     plugins: [GWAS],
-  });
+  })
   return (
     <ThemeProvider theme={theme}>
       <JBrowseLinearGenomeView viewState={state} />
     </ThemeProvider>
-  );
+  )
 }
 ```

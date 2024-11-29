@@ -4,7 +4,8 @@
 
 # v1.0.5
 
-- Fix ability to configure the renderer on the display, see sample config.json for custom coloring
+- Fix ability to configure the renderer on the display, see sample config.json
+  for custom coloring
 
 # v1.0.4
 
@@ -12,7 +13,8 @@
 
 # v1.0.3
 
-- Fix for v1.1.0 of jbrowse-web requires passing pluginManager to renderer constructor
+- Fix for v1.1.0 of jbrowse-web requires passing pluginManager to renderer
+  constructor
 
 # v1.0.2
 

@@ -4,19 +4,22 @@ Plugin for displaying GWAS results such as manhattan plot renderings
 
 ## Screenshot
 
-![](img/1.png)
-![](img/2.png)
+![](img/1.png) ![](img/2.png)
 
 ## Data format
 
-jbrowse-plugin-gwas will render any features with a "score". A common format is a BED-like file, perhaps with tabix added. Example with plain BED, where the score is in column 5
+jbrowse-plugin-gwas will render any features with a "score". A common format is
+a BED-like file, perhaps with tabix added. Example with plain BED, where the
+score is in column 5
 
 ```
 chr22 1000 5000 rs123 84.141
 chr22 2000 6000 rs456 40.12312
 ```
 
-Sometimes, the file format is not a strict BED but something with just one coordinate instead of a start and end. Example with BED-like data (only one coordinate column)
+Sometimes, the file format is not a strict BED but something with just one
+coordinate instead of a start and end. Example with BED-like data (only one
+coordinate column)
 
 ```
 #chrom  pos     rsid    ref     alt     neg_log_pvalue  beta    stderr_beta     alt_allele_freq
@@ -45,8 +48,8 @@ p-values, you may need to modify them or add a -log10(p) to the file)
 
 ## Example config
 
-The below config uses the "scoreColumn" attribute to set neg_log_pvalue (as
-seen in above section) to be the score that is plotted
+The below config uses the "scoreColumn" attribute to set neg_log_pvalue (as seen
+in above section) to be the score that is plotted
 
 ```json
 {
@@ -79,7 +82,8 @@ seen in above section) to be the score that is plotted
 
 ## Usage in jbrowse-web
 
-Add to the "plugins" of your JBrowse Web config. The unpkg CDN should be stable, or you can download the js file to your server
+Add to the "plugins" of your JBrowse Web config. The unpkg CDN should be stable,
+or you can download the js file to your server
 
 ```json
 {
@@ -92,7 +96,8 @@ Add to the "plugins" of your JBrowse Web config. The unpkg CDN should be stable,
 }
 ```
 
-This plugin is currently quite basic, and there is no mouseover interactivity or drawn labels on features
+This plugin is currently quite basic, and there is no mouseover interactivity or
+drawn labels on features
 
 #### Demo
 
