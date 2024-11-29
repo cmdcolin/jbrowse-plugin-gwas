@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2020",
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
@@ -33,12 +33,8 @@
     // Can remove this if only using TypeScript
     "allowJs": true,
     // Allow importing JSON files
-    "resolveJsonModule": false
-  },
-  // Jest uses ts-node to load the jest.config.ts file
-  "ts-node": {
-    "transpileOnly": true,
-    "project": "./tsconfig.test.json"
+    "resolveJsonModule": false,
+    "noUncheckedIndexedAccess":true
   },
   "include": ["src"],
   "exclude": ["**/dist/"]

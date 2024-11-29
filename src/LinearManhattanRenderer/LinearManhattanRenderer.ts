@@ -1,6 +1,7 @@
-import type PluginManager from '@jbrowse/core/PluginManager'
 import { readConfObject } from '@jbrowse/core/configuration'
 import { featureSpanPx } from '@jbrowse/core/util'
+
+import type PluginManager from '@jbrowse/core/PluginManager'
 import type WigglePlugin from '@jbrowse/plugin-wiggle'
 
 export function checkStopToken(stopToken?: string) {
@@ -71,7 +72,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
           ctx.stroke()
         })
       }
-      return undefined
+      return { originalFeatures: features }
     }
   }
 }

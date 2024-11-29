@@ -1,7 +1,9 @@
 import { ConfigurationSchema } from '@jbrowse/core/configuration'
-export { default } from './LinearManhattanRenderer'
+import LinearManhattanRendering from './LinearManhattanRendering'
 
-export const configSchema = ConfigurationSchema(
+import type PluginManager from '@jbrowse/core/PluginManager'
+
+const configSchema = ConfigurationSchema(
   'LinearManhattanRenderer',
   {
     /**
@@ -16,3 +18,16 @@ export const configSchema = ConfigurationSchema(
   },
   { explicitlyTyped: true },
 )
+
+export default function LinearManhattanRendererF(pluginManager: PluginManager) {
+  pluginManager.addRendererType(() => {
+    // @ts-expect-error
+    const LinearManhattanRenderer = new rendererFactory(pluginManager)
+    return new LinearManhattanRenderer({
+      name: 'LinearManhattanRenderer',
+      ReactComponent: LinearManhattanRendering,
+      configSchema,
+      pluginManager,
+    })
+  })
+}
