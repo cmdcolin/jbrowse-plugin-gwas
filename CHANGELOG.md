@@ -1,3 +1,7 @@
+# v2.0.2
+
+- Misc optimizations
+
 # v2.0.0
 
 - Add clickable features

@@ -46,11 +46,17 @@ export default function rendererFactory(pluginManager: PluginManager) {
       const width = (region.end - region.start) / bpPerPx
       const rbush = new RBush<any>()
 
+      const defaultColor = readConfObject(config, 'color')
       const scale = getScale(opts)
       const toY = (n: number) => height - scale(n) + YSCALEBAR_LABEL_OFFSET
 
       let start = performance.now()
       checkStopToken(stopToken)
+      let lastRenderedBlobX = 0
+      let lastRenderedBlobY = 0
+      if (!config.color.isCallback) {
+        ctx.fillStyle = defaultColor
+      }
       for (const feature of features.values()) {
         if (performance.now() - start > 200) {
           checkStopToken(stopToken)
@@ -58,18 +64,28 @@ export default function rendererFactory(pluginManager: PluginManager) {
         }
         const [leftPx] = featureSpanPx(feature, region, bpPerPx)
         const score = feature.get('score') as number
-        ctx.fillStyle = readConfObject(config, 'color', { feature })
-        ctx.beginPath()
         const y = toY(score)
-        ctx.arc(leftPx, y, 2, 0, 2 * Math.PI)
-        rbush.insert({
-          minX: leftPx,
-          minY: y,
-          maxX: leftPx + 4,
-          maxY: y + 4,
-          feature: feature.toJSON(),
-        })
-        ctx.fill()
+        if (
+          Math.abs(leftPx - lastRenderedBlobX) > 1 ||
+          Math.abs(y - lastRenderedBlobY) > 1
+        ) {
+          if (config.color.isCallback) {
+            ctx.fillStyle = readConfObject(config, 'color', { feature })
+          }
+          ctx.beginPath()
+          ctx.moveTo(leftPx, y)
+          ctx.arc(leftPx, y, 2, 0, 2 * Math.PI)
+          ctx.fill()
+          lastRenderedBlobY = y
+          lastRenderedBlobX = leftPx
+          rbush.insert({
+            minX: leftPx,
+            minY: y,
+            maxX: leftPx + 4,
+            maxY: y + 4,
+            feature: feature.toJSON(),
+          })
+        }
       }
 
       if (displayCrossHatches) {
