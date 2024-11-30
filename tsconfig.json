@@ -21,7 +21,7 @@
     "noEmit": false,
     "noUncheckedIndexedAccess": true,
     "allowJs": true,
-    "resolveJsonModule": false
+    "resolveJsonModule": true
   },
   "include": ["src"],
   "exclude": ["**/dist/"]

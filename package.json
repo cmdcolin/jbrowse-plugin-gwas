@@ -26,7 +26,6 @@
     "browse": "yarn jbrowse:*",
     "lint": "eslint --report-unused-disable-directives --max-warnings 0",
     "prepack": "yarn build",
-    "prepublishOnly": "node output-version.js > src/version.js && git add -A src && git commit -m '[skip ci] Bump version.js'",
     "postversion": "git push --follow-tags"
   },
   "devDependencies": {
