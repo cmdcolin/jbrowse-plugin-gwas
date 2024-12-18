@@ -9,11 +9,11 @@ import type { AnyConfigurationModel } from '@jbrowse/core/configuration'
 import type { Feature } from '@jbrowse/core/util'
 import type { TooltipContentsComponent } from '@jbrowse/plugin-wiggle'
 
-interface Props {
+export interface Props {
   feature: Feature
   model: Model
 }
-interface Model {
+export interface Model {
   configuration: AnyConfigurationModel
   featureUnderMouse?: Feature
 }

@@ -23,9 +23,8 @@
     "start": "node esbuild.mjs",
     "build": "tsc && NODE_ENV=production node esbuild.mjs",
     "postbuild": "cp distconfig.json dist/config.json",
-    "browse": "yarn jbrowse:*",
     "lint": "eslint --report-unused-disable-directives --max-warnings 0",
-    "prepack": "yarn build",
+    "preversion": "yarn build",
     "postversion": "git push --follow-tags"
   },
   "devDependencies": {
