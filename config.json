@@ -111,8 +111,39 @@
       },
       "displays": [
         {
-          "displayId": "gwas_display_custom_color_callback",
+          "displayId": "gwas_display_custom_color_callback_display",
           "type": "LinearManhattanDisplay",
+          "renderers": {
+            "LinearManhattanRenderer": {
+              "color": "jexl:'hsl('+get(feature,'start')/100000+',50%,50%)'"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "FeatureTrack",
+      "trackId": "gwas_track_custom_color_callback_and_tooltip",
+      "name": "GWAS (custom color callback and tooltip)",
+      "category": ["Annotation"],
+      "assemblyNames": ["hg19"],
+      "adapter": {
+        "type": "BedTabixAdapter",
+        "scoreColumn": "neg_log_pvalue",
+        "bedGzLocation": {
+          "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
+        },
+        "index": {
+          "location": {
+            "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz.tbi"
+          }
+        }
+      },
+      "displays": [
+        {
+          "displayId": "gwas_display_custom_color_callback_and_tooltip_display",
+          "type": "LinearManhattanDisplay",
+          "mouseover": "jexl:get(feature,'score')",
           "renderers": {
             "LinearManhattanRenderer": {
               "color": "jexl:'hsl('+get(feature,'start')/100000+',50%,50%)'"

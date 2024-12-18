@@ -1,6 +1,7 @@
 import Plugin from '@jbrowse/core/Plugin'
 
 import LinearManhattanDisplayF from './LinearManhattanDisplay'
+import JexlMouseoverF from './LinearManhattanDisplay/jexlMouseover'
 import LinearManhattanRendererF from './LinearManhattanRenderer'
 import { version } from '../package.json'
 
@@ -13,5 +14,6 @@ export default class GWASPlugin extends Plugin {
   install(pluginManager: PluginManager) {
     LinearManhattanDisplayF(pluginManager)
     LinearManhattanRendererF(pluginManager)
+    JexlMouseoverF(pluginManager)
   }
 }

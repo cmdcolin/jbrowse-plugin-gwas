@@ -42,20 +42,22 @@ export default function rendererFactory(pluginManager: PluginManager) {
       const [region] = regions
       const YSCALEBAR_LABEL_OFFSET = 5
       const height = unadjustedHeight - YSCALEBAR_LABEL_OFFSET * 2
-      const opts = { ...scaleOpts, range: [0, height] }
       const width = (region.end - region.start) / bpPerPx
       const rbush = new RBush<any>()
 
-      const defaultColor = readConfObject(config, 'color')
-      const scale = getScale(opts)
+      const scale = getScale({
+        ...scaleOpts,
+        range: [0, height],
+      })
       const toY = (n: number) => height - scale(n) + YSCALEBAR_LABEL_OFFSET
 
       let start = performance.now()
       checkStopToken(stopToken)
       let lastRenderedBlobX = 0
       let lastRenderedBlobY = 0
-      if (!config.color.isCallback) {
-        ctx.fillStyle = defaultColor
+      const { isCallback } = config.color
+      if (!isCallback) {
+        ctx.fillStyle = config.color.value
       }
       for (const feature of features.values()) {
         if (performance.now() - start > 200) {
@@ -69,7 +71,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
           Math.abs(leftPx - lastRenderedBlobX) > 1 ||
           Math.abs(y - lastRenderedBlobY) > 1
         ) {
-          if (config.color.isCallback) {
+          if (isCallback) {
             ctx.fillStyle = readConfObject(config, 'color', { feature })
           }
           ctx.beginPath()

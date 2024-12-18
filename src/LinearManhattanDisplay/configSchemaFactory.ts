@@ -13,9 +13,15 @@ export function configSchemaFactory(pluginManager: PluginManager) {
   const LinearManhattanRendererConfigSchema = pluginManager.getRendererType(
     'LinearManhattanRenderer',
   )!.configSchema
+
   return ConfigurationSchema(
     'LinearManhattanDisplay',
     {
+      mouseover: {
+        type: 'string',
+        defaultValue: 'jexl:getTooltip(feature)',
+        contextVariable: ['feature'],
+      },
       autoscale: {
         type: 'stringEnum',
         defaultValue: 'local',
