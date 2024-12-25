@@ -93,9 +93,6 @@ export function stateModelFactory(
             {
               label: 'Edit filters',
               onClick: () => {
-                let arr = ['a', 'b', 'c']
-                console.log(arr.includes('a'))
-                console.log(arr.includes('z'))
                 getSession(self).queueDialog(handleClose => [
                   AddFiltersDialog,
                   { model: self, handleClose },
