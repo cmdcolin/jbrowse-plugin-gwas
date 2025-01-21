@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 
 import { PrerenderedCanvas } from '@jbrowse/core/ui'
 import { SimpleFeature } from '@jbrowse/core/util'
@@ -17,15 +17,33 @@ const LinearManhattanRendering = observer(function (props: {
   blockKey: string
   scaleOpts: any
   clickMap: any
+  displayModel?: any
   onMouseLeave?: (event: React.MouseEvent) => void
   onMouseMove?: (event: React.MouseEvent, arg?: string) => void
   onFeatureClick?: (event: React.MouseEvent, arg?: string) => void
 }) {
-  const { height, onMouseLeave, onMouseMove, onFeatureClick, clickMap } = props
-  const clickMap2 = useMemo(() => {
-    return new RBush<{ feature: SimpleFeatureSerialized }>().fromJSON(clickMap)
-  }, [clickMap])
+  const {
+    blockKey,
+    clickMap,
+    displayModel,
+    height,
+    onMouseLeave,
+    onMouseMove,
+    onFeatureClick,
+  } = props
+
+  const clickMap2 = useMemo(
+    () => new RBush<{ feature: SimpleFeatureSerialized }>().fromJSON(clickMap),
+    [clickMap],
+  )
   const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    displayModel.setBlockClickMap(blockKey, clickMap2)
+    return () => {
+      displayModel.removeBlockClickMap(blockKey)
+    }
+  }, [displayModel, blockKey, clickMap2])
 
   function getFeatureUnderMouse(eventClientX: number, eventClientY: number) {
     // calculates feature under mouse
