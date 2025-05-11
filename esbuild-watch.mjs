@@ -14,14 +14,12 @@ function createGlobalMap(jbrowseGlobals) {
   return globalMap
 }
 
-await esbuild.build({
+let ctx = await esbuild.context({
   entryPoints: ['src/index.ts'],
   bundle: true,
   globalName: 'JBrowsePluginGWAS',
-  sourcemap: true,
-  outfile: 'dist/jbrowse-plugin-gwas.umd.production.min.js',
-  metafile: process.env.NODE_ENV === 'production',
-  minify: process.env.NODE,
+  outfile: 'dist/out.js',
+  metafile: true,
   plugins: [
     globalExternals(createGlobalMap(JbrowseGlobals.default)),
     {
@@ -50,3 +48,13 @@ await esbuild.build({
     },
   ],
 })
+let { host, port } = await ctx.serve({
+  servedir: '.',
+  port: 9000,
+  host: 'localhost',
+})
+const formattedHost = host === '127.0.0.1' ? 'localhost' : host
+console.log(`Serving at http://${formattedHost}:${port}`)
+
+await ctx.watch()
+console.log('Watching files...')

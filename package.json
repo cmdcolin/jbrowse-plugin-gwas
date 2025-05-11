@@ -20,7 +20,7 @@
     "clean": "rimraf dist",
     "format": "yarn prettier --write .",
     "prebuild": "yarn clean",
-    "start": "node esbuild.mjs",
+    "start": "node esbuild-watch.mjs",
     "build": "tsc && NODE_ENV=production node esbuild.mjs",
     "postbuild": "cp distconfig.json dist/config.json",
     "lint": "eslint --report-unused-disable-directives --max-warnings 0",
