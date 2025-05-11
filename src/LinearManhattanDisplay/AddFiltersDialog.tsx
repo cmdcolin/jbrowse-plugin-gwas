@@ -1,5 +1,4 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Dialog } from '@jbrowse/core/ui'
 import { stringToJexlExpression } from '@jbrowse/core/util/jexlStrings'

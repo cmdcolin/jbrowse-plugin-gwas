@@ -7,7 +7,12 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs', 'esbuild.mjs', 'dist/*'],
+    ignores: [
+      'eslint.config.mjs',
+      'esbuild.mjs',
+      'dist/*',
+      'esbuild-watch.mjs',
+    ],
   },
   {
     languageOptions: {

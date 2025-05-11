@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild'
+import http from 'node:http'
 import { globalExternals } from '@fal-works/esbuild-plugin-global-externals'
 import JbrowseGlobals from '@jbrowse/core/ReExports/list.js'
 import prettyBytes from 'pretty-bytes'
@@ -48,13 +49,43 @@ let ctx = await esbuild.context({
     },
   ],
 })
-let { host, port } = await ctx.serve({
+
+const PORT = process.env.PORT ? +process.env.PORT : 9000
+const PORT2 = PORT + 400
+
+let { hosts } = await ctx.serve({
   servedir: '.',
-  port: 9000,
-  host: 'localhost',
+  port: PORT2,
 })
-const formattedHost = host === '127.0.0.1' ? 'localhost' : host
-console.log(`Serving at http://${formattedHost}:${port}`)
+
+http
+  .createServer((req, res) => {
+    const proxyReq = http.request(
+      {
+        hostname: hosts[0],
+        port: PORT2,
+        path: req.url,
+        method: req.method,
+        headers: req.headers,
+      },
+      proxyRes => {
+        //restore the CORS after
+        //https://github.com/evanw/esbuild/releases/tag/v0.25.0 disabled it
+        //as a potential vuln
+        res.writeHead(proxyRes.statusCode, {
+          ...proxyRes.headers,
+          'Access-Control-Allow-Origin': '*',
+        })
+        proxyRes.pipe(res, { end: true })
+      },
+    )
+
+    // Forward the body of the request to esbuild
+    req.pipe(proxyReq, { end: true })
+  })
+  .listen(PORT)
+
+console.log(`Serving at http://${hosts[0]}:${PORT}`)
 
 await ctx.watch()
 console.log('Watching files...')
