@@ -1,3 +1,4 @@
+import fs from 'fs'
 import * as esbuild from 'esbuild'
 import { globalExternals } from '@fal-works/esbuild-plugin-global-externals'
 import JbrowseGlobals from '@jbrowse/core/ReExports/list.js'
@@ -14,10 +15,12 @@ function createGlobalMap(jbrowseGlobals) {
   return globalMap
 }
 
-await esbuild.build({
+const result = await esbuild.build({
   entryPoints: ['src/index.ts'],
   bundle: true,
   globalName: 'JBrowsePluginGWAS',
+
+  metafile: true,
   sourcemap: true,
   outfile: 'dist/jbrowse-plugin-gwas.umd.production.min.js',
   metafile: process.env.NODE_ENV === 'production',
@@ -50,3 +53,5 @@ await esbuild.build({
     },
   ],
 })
+
+fs.writeFileSync('meta.json', JSON.stringify(result.metafile))
