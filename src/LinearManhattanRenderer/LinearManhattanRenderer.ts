@@ -1,5 +1,13 @@
-import { readConfObject } from '@jbrowse/core/configuration'
-import { featureSpanPx } from '@jbrowse/core/util'
+import {
+  AnyConfigurationModel,
+  readConfObject,
+} from '@jbrowse/core/configuration'
+import {
+  Feature,
+  featureSpanPx,
+  Region,
+  updateStatus,
+} from '@jbrowse/core/util'
 import RBush from 'rbush'
 
 import type PluginManager from '@jbrowse/core/PluginManager'
@@ -19,6 +27,19 @@ export function checkStopToken(stopToken?: string) {
   }
 }
 
+interface ManhattanProps {
+  features: Map<string, Feature>
+  regions: Region[]
+  bpPerPx: number
+  statusCallback?: (arg: string) => void
+  config: AnyConfigurationModel
+  scaleOpts: any
+  height: number
+  displayCrossHatches: boolean
+  ticks: { values: number[] }
+  stopToken?: string
+}
+
 export default function rendererFactory(pluginManager: PluginManager) {
   const WigglePlugin = pluginManager.getPlugin('WigglePlugin') as WigglePlugin
   const {
@@ -27,11 +48,12 @@ export default function rendererFactory(pluginManager: PluginManager) {
   } = WigglePlugin.exports
 
   return class ManhattanPlotRenderer extends WiggleBaseRenderer {
-    async draw(ctx: CanvasRenderingContext2D, props: any) {
+    async draw(ctx: CanvasRenderingContext2D, props: ManhattanProps) {
       const {
         features,
         regions,
         bpPerPx,
+        statusCallback = () => {},
         config,
         scaleOpts,
         height: unadjustedHeight,
@@ -39,7 +61,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
         ticks: { values },
         stopToken,
       } = props
-      const [region] = regions
+      const region = regions[0]!
       const YSCALEBAR_LABEL_OFFSET = 5
       const height = unadjustedHeight - YSCALEBAR_LABEL_OFFSET * 2
       const width = (region.end - region.start) / bpPerPx
@@ -59,37 +81,37 @@ export default function rendererFactory(pluginManager: PluginManager) {
       if (!isCallback) {
         ctx.fillStyle = config.color.value
       }
-      for (const feature of features.values()) {
-        if (performance.now() - start > 200) {
-          checkStopToken(stopToken)
-          start = performance.now()
-        }
-        const [leftPx] = featureSpanPx(feature, region, bpPerPx)
-        const score = feature.get('score') as number
-        const y = toY(score)
-        if (
-          Math.abs(leftPx - lastRenderedBlobX) > 1 ||
-          Math.abs(y - lastRenderedBlobY) > 1
-        ) {
-          if (isCallback) {
-            ctx.fillStyle = readConfObject(config, 'color', { feature })
+      await updateStatus('Rendering plot', statusCallback, () => {
+        for (const feature of features.values()) {
+          if (performance.now() - start > 200) {
+            checkStopToken(stopToken)
+            start = performance.now()
           }
-          ctx.beginPath()
-          ctx.moveTo(leftPx, y)
-          ctx.arc(leftPx, y, 2, 0, 2 * Math.PI)
-          ctx.fill()
-          lastRenderedBlobY = y
-          lastRenderedBlobX = leftPx
-          rbush.insert({
-            minX: leftPx,
-            minY: y,
-            maxX: leftPx + 4,
-            maxY: y + 4,
-            feature: feature.toJSON(),
-          })
+          const [leftPx] = featureSpanPx(feature, region, bpPerPx)
+          const score = feature.get('score') as number
+          const y = toY(score)
+          if (
+            Math.abs(leftPx - lastRenderedBlobX) > 1 ||
+            Math.abs(y - lastRenderedBlobY) > 1
+          ) {
+            if (isCallback) {
+              ctx.fillStyle = readConfObject(config, 'color', { feature })
+            }
+            ctx.beginPath()
+            ctx.arc(leftPx, y, 2, 0, 2 * Math.PI)
+            ctx.fill()
+            lastRenderedBlobY = y
+            lastRenderedBlobX = leftPx
+            rbush.insert({
+              minX: leftPx - 2,
+              minY: y - 2,
+              maxX: leftPx + 2,
+              maxY: y + 2,
+              feature: feature.toJSON(),
+            })
+          }
         }
-      }
-
+      })
       if (displayCrossHatches) {
         ctx.lineWidth = 1
         ctx.strokeStyle = 'rgba(200,200,200,0.8)'
