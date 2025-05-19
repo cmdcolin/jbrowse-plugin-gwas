@@ -21,7 +21,7 @@ await esbuild.build({
   sourcemap: true,
   outfile: 'dist/jbrowse-plugin-gwas.umd.production.min.js',
   metafile: process.env.NODE_ENV === 'production',
-  minify: process.env.NODE,
+  minify: true,
   plugins: [
     globalExternals(createGlobalMap(JbrowseGlobals.default)),
     {
