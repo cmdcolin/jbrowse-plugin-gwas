@@ -15,7 +15,6 @@ import TooltipComponent from './components/TooltipComponent'
 
 import type PluginManager from '@jbrowse/core/PluginManager'
 import type { AnyConfigurationSchemaType } from '@jbrowse/core/configuration'
-import type { MenuItem } from '@jbrowse/core/ui'
 import type { Feature } from '@jbrowse/core/util'
 import type WigglePlugin from '@jbrowse/plugin-wiggle'
 
@@ -45,24 +44,45 @@ export function stateModelFactory(
       }),
     )
     .views(self => ({
+      /**
+       * #getter
+       */
       get TooltipComponent() {
         return TooltipComponent
       },
+      /**
+       * #getter
+       */
       get rendererTypeName() {
         return 'LinearManhattanRenderer'
       },
+      /**
+       * #getter
+       * older way of showing y-scalebar
+       */
       get needsScalebar() {
         return true
       },
+      /**
+       * #getter
+       * newer way of showing y-scalebar
+       */
+      get graphType() {
+        return true
+      },
+      /**
+       * #getter
+       * never too large!
+       */
       get regionTooLarge() {
         return false
       },
       /**
        * #getter
+       * config jexlFilters are deferred evaluated so they are prepended with
+       * jexl at runtime rather than being stored with jexl in the config
        */
       get activeFilters() {
-        // config jexlFilters are deferred evaluated so they are prepended with
-        // jexl at runtime rather than being stored with jexl in the config
         return (
           self.jexlFilters ??
           getConf(self, 'jexlFilters').map((r: string) => `jexl:${r}`)
@@ -124,7 +144,7 @@ export function stateModelFactory(
         /**
          * #method
          */
-        trackMenuItems(): MenuItem[] {
+        trackMenuItems() {
           return [
             ...superTrackMenuItems(),
             {
