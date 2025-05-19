@@ -12,20 +12,7 @@ import RBush from 'rbush'
 
 import type PluginManager from '@jbrowse/core/PluginManager'
 import type WigglePlugin from '@jbrowse/plugin-wiggle'
-
-export function checkStopToken(stopToken?: string) {
-  if (stopToken !== undefined) {
-    const xhr = new XMLHttpRequest()
-
-    // synchronous XHR usage to check the token
-    xhr.open('GET', stopToken, false)
-    try {
-      xhr.send(null)
-    } catch (e) {
-      throw new Error('aborted')
-    }
-  }
-}
+import { checkStopToken } from './util'
 
 interface ManhattanProps {
   features: Map<string, Feature>
@@ -115,7 +102,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
       if (displayCrossHatches) {
         ctx.lineWidth = 1
         ctx.strokeStyle = 'rgba(200,200,200,0.8)'
-        values.forEach((tick: number) => {
+        values.forEach(tick => {
           ctx.beginPath()
           ctx.moveTo(0, Math.round(toY(tick)))
           ctx.lineTo(width, Math.round(toY(tick)))

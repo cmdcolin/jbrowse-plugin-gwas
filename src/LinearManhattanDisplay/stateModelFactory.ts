@@ -11,7 +11,7 @@ import {
 } from '@jbrowse/core/util'
 import { cast, types } from 'mobx-state-tree'
 
-import TooltipComponent from './TooltipComponent'
+import TooltipComponent from './components/TooltipComponent'
 
 import type PluginManager from '@jbrowse/core/PluginManager'
 import type { AnyConfigurationSchemaType } from '@jbrowse/core/configuration'
@@ -20,7 +20,7 @@ import type { Feature } from '@jbrowse/core/util'
 import type WigglePlugin from '@jbrowse/plugin-wiggle'
 
 // lazies
-const AddFiltersDialog = lazy(() => import('./AddFiltersDialog'))
+const AddFiltersDialog = lazy(() => import('./components/AddFiltersDialog'))
 
 export function stateModelFactory(
   pluginManager: PluginManager,
