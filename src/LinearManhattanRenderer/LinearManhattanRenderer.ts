@@ -58,9 +58,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
         range: [0, height],
       })
       const toY = (n: number) => height - scale(n) + YSCALEBAR_LABEL_OFFSET
-
       let start = performance.now()
-      checkStopToken(stopToken)
       let lastRenderedBlobX = 0
       let lastRenderedBlobY = 0
       const { isCallback } = config.color
@@ -75,10 +73,13 @@ export default function rendererFactory(pluginManager: PluginManager) {
         feature: any
       }[] = []
       await updateStatus('Rendering plot', statusCallback, () => {
+        let i = 0
         for (const feature of features.values()) {
-          if (performance.now() - start > 200) {
-            checkStopToken(stopToken)
-            start = performance.now()
+          if (i++ % 100 === 0) {
+            if (performance.now() - start > 200) {
+              checkStopToken(stopToken)
+              start = performance.now()
+            }
           }
           const [leftPx] = featureSpanPx(feature, region, bpPerPx)
           const score = feature.get('score') as number
