@@ -37,7 +37,7 @@
   ],
   "tracks": [
     {
-      "type": "GWASTrack",
+      "type": "FeatureTrack",
       "trackId": "gwas_track",
       "name": "GWAS",
       "category": ["Annotation"],
@@ -62,7 +62,7 @@
       ]
     },
     {
-      "type": "GWASTrack",
+      "type": "FeatureTrack",
       "trackId": "gwas_track_custom_color",
       "name": "GWAS (custom color)",
       "category": ["Annotation"],
@@ -92,7 +92,7 @@
       ]
     },
     {
-      "type": "GWASTrack",
+      "type": "FeatureTrack",
       "trackId": "gwas_track_custom_color_callback",
       "name": "GWAS (custom color callback)",
       "category": ["Annotation"],
@@ -122,7 +122,7 @@
       ]
     },
     {
-      "type": "GWASTrack",
+      "type": "FeatureTrack",
       "trackId": "gwas_track_custom_color_callback_and_tooltip",
       "name": "GWAS (custom color callback and tooltip)",
       "category": ["Annotation"],
