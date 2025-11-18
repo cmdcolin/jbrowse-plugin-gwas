@@ -37,7 +37,7 @@
   ],
   "tracks": [
     {
-      "type": "FeatureTrack",
+      "type": "GWASTrack",
       "trackId": "gwas_track",
       "name": "GWAS",
       "category": ["Annotation"],

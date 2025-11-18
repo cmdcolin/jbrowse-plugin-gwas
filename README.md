@@ -53,7 +53,7 @@ in above section) to be the score that is plotted
 
 ```json
 {
-  "type": "FeatureTrack",
+  "type": "GWASTrack",
   "trackId": "gwas_track",
   "name": "GWAS",
   "category": ["Annotation"],

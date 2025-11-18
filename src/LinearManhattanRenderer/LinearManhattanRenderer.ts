@@ -8,7 +8,7 @@ import {
   Region,
   updateStatus,
 } from '@jbrowse/core/util'
-import RBush from 'rbush'
+import Flatbush from 'flatbush'
 
 import type PluginManager from '@jbrowse/core/PluginManager'
 import type WigglePlugin from '@jbrowse/plugin-wiggle'
@@ -52,7 +52,6 @@ export default function rendererFactory(pluginManager: PluginManager) {
       const YSCALEBAR_LABEL_OFFSET = 5
       const height = unadjustedHeight - YSCALEBAR_LABEL_OFFSET * 2
       const width = (region.end - region.start) / bpPerPx
-      const rbush = new RBush<any>()
 
       const scale = getScale({
         ...scaleOpts,
@@ -68,6 +67,13 @@ export default function rendererFactory(pluginManager: PluginManager) {
       if (!isCallback) {
         ctx.fillStyle = config.color.value
       }
+      const items: {
+        minX: number
+        minY: number
+        maxX: number
+        maxY: number
+        feature: any
+      }[] = []
       await updateStatus('Rendering plot', statusCallback, () => {
         for (const feature of features.values()) {
           if (performance.now() - start > 200) {
@@ -89,7 +95,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
             ctx.fill()
             lastRenderedBlobY = y
             lastRenderedBlobX = leftPx
-            rbush.insert({
+            items.push({
               minX: leftPx - 2,
               minY: y - 2,
               maxX: leftPx + 2,
@@ -109,8 +115,20 @@ export default function rendererFactory(pluginManager: PluginManager) {
           ctx.stroke()
         })
       }
+      const index = new Flatbush(Math.max(items.length, 1))
+      if (items.length === 0) {
+        index.add(0, 0, 0, 0)
+      } else {
+        for (const item of items) {
+          index.add(item.minX, item.minY, item.maxX, item.maxY)
+        }
+      }
+      index.finish()
       return {
-        clickMap: rbush.toJSON(),
+        clickMap: {
+          index: index.data,
+          items,
+        },
       }
     }
   }

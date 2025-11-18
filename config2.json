@@ -37,13 +37,14 @@
   ],
   "tracks": [
     {
-      "type": "GWASTrack",
+      "type": "FeatureTrack",
       "trackId": "gwas_track",
       "name": "GWAS",
       "category": ["Annotation"],
       "assemblyNames": ["hg19"],
       "adapter": {
-        "type": "GWASAdapter",
+        "type": "BedTabixAdapter",
+        "scoreColumn": "neg_log_pvalue",
         "bedGzLocation": {
           "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
         },
@@ -61,13 +62,14 @@
       ]
     },
     {
-      "type": "GWASTrack",
+      "type": "FeatureTrack",
       "trackId": "gwas_track_custom_color",
       "name": "GWAS (custom color)",
       "category": ["Annotation"],
       "assemblyNames": ["hg19"],
       "adapter": {
-        "type": "GWASAdapter",
+        "type": "BedTabixAdapter",
+        "scoreColumn": "neg_log_pvalue",
         "bedGzLocation": {
           "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
         },
@@ -90,13 +92,14 @@
       ]
     },
     {
-      "type": "GWASTrack",
+      "type": "FeatureTrack",
       "trackId": "gwas_track_custom_color_callback",
       "name": "GWAS (custom color callback)",
       "category": ["Annotation"],
       "assemblyNames": ["hg19"],
       "adapter": {
-        "type": "GWASAdapter",
+        "type": "BedTabixAdapter",
+        "scoreColumn": "neg_log_pvalue",
         "bedGzLocation": {
           "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
         },
@@ -119,13 +122,14 @@
       ]
     },
     {
-      "type": "GWASTrack",
+      "type": "FeatureTrack",
       "trackId": "gwas_track_custom_color_callback_and_tooltip",
       "name": "GWAS (custom color callback and tooltip)",
       "category": ["Annotation"],
       "assemblyNames": ["hg19"],
       "adapter": {
-        "type": "GWASAdapter",
+        "type": "BedTabixAdapter",
+        "scoreColumn": "neg_log_pvalue",
         "bedGzLocation": {
           "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
         },

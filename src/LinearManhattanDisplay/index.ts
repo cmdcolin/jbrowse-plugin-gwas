@@ -17,7 +17,7 @@ export default function LinearManhattanDisplayF(pluginManager: PluginManager) {
       name: 'LinearManhattanDisplay',
       configSchema,
       stateModel: stateModelFactory(pluginManager, configSchema),
-      trackType: 'FeatureTrack',
+      trackType: 'GWASTrack',
       viewType: 'LinearGenomeView',
       ReactComponent: LinearWiggleDisplayReactComponent,
     })
