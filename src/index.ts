@@ -1,6 +1,7 @@
 import Plugin from '@jbrowse/core/Plugin'
 
 import GWASAdapterF from './GWASAdapter'
+import GWASAddTrackComponentF from './GWASAddTrackComponent'
 import GWASTrackF from './GWASTrack'
 import GuessAdapterF from './GuessAdapter'
 import LinearManhattanDisplayF from './LinearManhattanDisplay'
@@ -16,6 +17,7 @@ export default class GWASPlugin extends Plugin {
 
   install(pluginManager: PluginManager) {
     GWASAdapterF(pluginManager)
+    GWASAddTrackComponentF(pluginManager)
     GWASTrackF(pluginManager)
     GuessAdapterF(pluginManager)
     LinearManhattanDisplayF(pluginManager)
