@@ -1,46 +1,95 @@
+import FeatureRendererType from '@jbrowse/core/pluggableElementTypes/renderers/FeatureRendererType'
 import {
   AnyConfigurationModel,
   readConfObject,
 } from '@jbrowse/core/configuration'
 import {
   Feature,
-  featureSpanPx,
   Region,
+  renderToAbstractCanvas,
   updateStatus,
 } from '@jbrowse/core/util'
+import { getScale } from '@jbrowse/plugin-wiggle'
 import Flatbush from 'flatbush'
 
-import type PluginManager from '@jbrowse/core/PluginManager'
-import type WigglePlugin from '@jbrowse/plugin-wiggle'
 import { checkStopToken } from './util'
 
-interface ManhattanProps {
+import type PluginManager from '@jbrowse/core/PluginManager'
+
+const TWO_PI = Math.PI * 2
+const YSCALEBAR_LABEL_OFFSET = 5
+const POINT_RADIUS = 2
+
+interface ManhattanRenderProps {
   features: Map<string, Feature>
   regions: Region[]
   bpPerPx: number
   statusCallback?: (arg: string) => void
   config: AnyConfigurationModel
-  scaleOpts: any
+  scaleOpts: {
+    domain: number[]
+    scaleType: string
+    pivotValue?: number
+    inverted?: boolean
+  }
   height: number
   displayCrossHatches: boolean
   ticks: { values: number[] }
   stopToken?: string
+  highResolutionScaling?: number
 }
 
-export default function rendererFactory(pluginManager: PluginManager) {
-  const WigglePlugin = pluginManager.getPlugin('WigglePlugin') as WigglePlugin
-  const {
-    utils: { getScale },
-    WiggleBaseRenderer,
-  } = WigglePlugin.exports
+export default function rendererFactory(_pluginManager: PluginManager) {
+  return class ManhattanPlotRenderer extends FeatureRendererType {
+    supportsSVG = true
 
-  return class ManhattanPlotRenderer extends WiggleBaseRenderer {
-    async draw(ctx: CanvasRenderingContext2D, props: ManhattanProps) {
+    async render(renderProps: ManhattanRenderProps) {
+      const features = await this.getFeatures(renderProps)
+      const { height, regions, bpPerPx, statusCallback = () => {} } = renderProps
+
+      const region = regions[0]!
+      const width = (region.end - region.start) / bpPerPx
+
+      const { reducedFeatures, ...rest } = await updateStatus(
+        'Rendering plot',
+        statusCallback,
+        () =>
+          renderToAbstractCanvas(width, height, renderProps, ctx =>
+            this.draw(ctx, {
+              ...renderProps,
+              features,
+            }),
+          ),
+      )
+
+      const results = await super.render({
+        ...renderProps,
+        ...rest,
+        features,
+        height,
+        width,
+      })
+
+      return {
+        ...results,
+        ...rest,
+        features: reducedFeatures
+          ? new Map<string, Feature>(reducedFeatures.map(r => [r.id(), r]))
+          : results.features,
+        height,
+        width,
+        containsNoTransferables: true,
+      }
+    }
+
+    async draw(
+      ctx: CanvasRenderingContext2D,
+      props: ManhattanRenderProps & { features: Map<string, Feature> },
+    ) {
       const {
         features,
         regions,
         bpPerPx,
-        statusCallback = () => {},
         config,
         scaleOpts,
         height: unadjustedHeight,
@@ -49,22 +98,20 @@ export default function rendererFactory(pluginManager: PluginManager) {
         stopToken,
       } = props
       const region = regions[0]!
-      const YSCALEBAR_LABEL_OFFSET = 5
       const height = unadjustedHeight - YSCALEBAR_LABEL_OFFSET * 2
       const width = (region.end - region.start) / bpPerPx
+      const regionStart = region.start
 
       const scale = getScale({
         ...scaleOpts,
         range: [0, height],
       })
       const toY = (n: number) => height - scale(n) + YSCALEBAR_LABEL_OFFSET
-      let start = performance.now()
-      let lastRenderedBlobX = 0
-      let lastRenderedBlobY = 0
+
       const { isCallback } = config.color
-      if (!isCallback) {
-        ctx.fillStyle = config.color.value
-      }
+      const colorValue = config.color.value as string
+      const canBatch =
+        !isCallback && !colorValue.includes('rgba') && !colorValue.includes('hsla')
       const items: {
         minX: number
         minY: number
@@ -72,16 +119,51 @@ export default function rendererFactory(pluginManager: PluginManager) {
         maxY: number
         feature: any
       }[] = []
-      await updateStatus('Rendering plot', statusCallback, () => {
-        let i = 0
+
+      let lastRenderedBlobX = 0
+      let lastRenderedBlobY = 0
+      let start = performance.now()
+      let i = 0
+
+      if (canBatch) {
+        ctx.fillStyle = colorValue
+        ctx.beginPath()
         for (const feature of features.values()) {
-          if (i++ % 100 === 0) {
-            if (performance.now() - start > 200) {
-              checkStopToken(stopToken)
-              start = performance.now()
-            }
+          if (i++ % 100 === 0 && performance.now() - start > 200) {
+            checkStopToken(stopToken)
+            start = performance.now()
           }
-          const [leftPx] = featureSpanPx(feature, region, bpPerPx)
+          const leftPx = (feature.get('start') - regionStart) / bpPerPx
+          const score = feature.get('score') as number
+          const y = toY(score)
+          if (
+            Math.abs(leftPx - lastRenderedBlobX) > 1 ||
+            Math.abs(y - lastRenderedBlobY) > 1
+          ) {
+            ctx.moveTo(leftPx + POINT_RADIUS, y)
+            ctx.arc(leftPx, y, POINT_RADIUS, 0, TWO_PI)
+            lastRenderedBlobY = y
+            lastRenderedBlobX = leftPx
+            items.push({
+              minX: leftPx - POINT_RADIUS,
+              minY: y - POINT_RADIUS,
+              maxX: leftPx + POINT_RADIUS,
+              maxY: y + POINT_RADIUS,
+              feature: feature.toJSON(),
+            })
+          }
+        }
+        ctx.fill()
+      } else {
+        if (!isCallback) {
+          ctx.fillStyle = colorValue
+        }
+        for (const feature of features.values()) {
+          if (i++ % 100 === 0 && performance.now() - start > 200) {
+            checkStopToken(stopToken)
+            start = performance.now()
+          }
+          const leftPx = (feature.get('start') - regionStart) / bpPerPx
           const score = feature.get('score') as number
           const y = toY(score)
           if (
@@ -92,30 +174,33 @@ export default function rendererFactory(pluginManager: PluginManager) {
               ctx.fillStyle = readConfObject(config, 'color', { feature })
             }
             ctx.beginPath()
-            ctx.arc(leftPx, y, 2, 0, 2 * Math.PI)
+            ctx.arc(leftPx, y, POINT_RADIUS, 0, TWO_PI)
             ctx.fill()
             lastRenderedBlobY = y
             lastRenderedBlobX = leftPx
             items.push({
-              minX: leftPx - 2,
-              minY: y - 2,
-              maxX: leftPx + 2,
-              maxY: y + 2,
+              minX: leftPx - POINT_RADIUS,
+              minY: y - POINT_RADIUS,
+              maxX: leftPx + POINT_RADIUS,
+              maxY: y + POINT_RADIUS,
               feature: feature.toJSON(),
             })
           }
         }
-      })
+      }
+
       if (displayCrossHatches) {
         ctx.lineWidth = 1
         ctx.strokeStyle = 'rgba(200,200,200,0.8)'
-        values.forEach(tick => {
-          ctx.beginPath()
-          ctx.moveTo(0, Math.round(toY(tick)))
-          ctx.lineTo(width, Math.round(toY(tick)))
-          ctx.stroke()
-        })
+        ctx.beginPath()
+        for (const tick of values) {
+          const y = Math.round(toY(tick))
+          ctx.moveTo(0, y)
+          ctx.lineTo(width, y)
+        }
+        ctx.stroke()
       }
+
       const index = new Flatbush(Math.max(items.length, 1))
       if (items.length === 0) {
         index.add(0, 0, 0, 0)
@@ -125,6 +210,7 @@ export default function rendererFactory(pluginManager: PluginManager) {
         }
       }
       index.finish()
+
       return {
         clickMap: {
           index: index.data,

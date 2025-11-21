@@ -6,8 +6,7 @@ import type PluginManager from '@jbrowse/core/PluginManager'
 
 export default function LinearManhattanRendererF(pluginManager: PluginManager) {
   pluginManager.addRendererType(() => {
-    // @ts-expect-error
-    const LinearManhattanRenderer = new rendererFactory(pluginManager)
+    const LinearManhattanRenderer = rendererFactory(pluginManager)
     return new LinearManhattanRenderer({
       name: 'LinearManhattanRenderer',
       ReactComponent: LinearManhattanRendering,
