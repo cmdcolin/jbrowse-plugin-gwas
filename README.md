@@ -101,7 +101,7 @@ drawn labels on features
 
 #### Demo
 
-https://jbrowse.org/code/jb2/main/index.html?config=https%3A%2F%2Funpkg.com%2Fjbrowse-plugin-gwas%2Fdist%2Fconfig.json&session=share-iehjT6AoHd&password=lZS7v
+https://jbrowse.org/code/jb2/main/index.html?config=https%3A%2F%2Funpkg.com%2Fjbrowse-plugin-gwas%2Fdist%2Fconfig.json&session=share-3SQ5lsql41&password=VAmX9
 
 ### For use in jbrowse/react-linear-genome-view
 
