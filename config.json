@@ -44,6 +44,7 @@
       "assemblyNames": ["hg19"],
       "adapter": {
         "type": "GWASAdapter",
+        "scoreColumn": "neg_log_pvalue",
         "bedGzLocation": {
           "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
         },
@@ -68,6 +69,7 @@
       "assemblyNames": ["hg19"],
       "adapter": {
         "type": "GWASAdapter",
+        "scoreColumn": "neg_log_pvalue",
         "bedGzLocation": {
           "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
         },
@@ -97,6 +99,7 @@
       "assemblyNames": ["hg19"],
       "adapter": {
         "type": "GWASAdapter",
+        "scoreColumn": "neg_log_pvalue",
         "bedGzLocation": {
           "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
         },
@@ -126,6 +129,7 @@
       "assemblyNames": ["hg19"],
       "adapter": {
         "type": "GWASAdapter",
+        "scoreColumn": "neg_log_pvalue",
         "bedGzLocation": {
           "uri": "https://s3.amazonaws.com/jbrowse.org/genomes/hg19/gwas/summary_stats.txt.gz"
         },

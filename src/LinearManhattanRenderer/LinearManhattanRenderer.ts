@@ -1,24 +1,20 @@
+import { readConfObject } from '@jbrowse/core/configuration'
 import FeatureRendererType from '@jbrowse/core/pluggableElementTypes/renderers/FeatureRendererType'
-import {
-  AnyConfigurationModel,
-  readConfObject,
-} from '@jbrowse/core/configuration'
-import {
-  Feature,
-  Region,
-  renderToAbstractCanvas,
-  updateStatus,
-} from '@jbrowse/core/util'
+import { renderToAbstractCanvas, updateStatus } from '@jbrowse/core/util'
 import { getScale } from '@jbrowse/plugin-wiggle'
 import Flatbush from 'flatbush'
 
 import { checkStopToken } from './util'
 
+import type { AnyConfigurationModel } from '@jbrowse/core/configuration'
+import type { RenderArgsDeserialized } from '@jbrowse/core/pluggableElementTypes/renderers/FeatureRendererType'
+import type { Feature, Region } from '@jbrowse/core/util'
+
 const TWO_PI = Math.PI * 2
 const YSCALEBAR_LABEL_OFFSET = 5
 const POINT_RADIUS = 2
 
-interface ManhattanRenderProps {
+interface ManhattanRenderProps extends RenderArgsDeserialized {
   features: Map<string, Feature>
   regions: Region[]
   bpPerPx: number
@@ -33,8 +29,15 @@ interface ManhattanRenderProps {
   height: number
   displayCrossHatches: boolean
   ticks: { values: number[] }
-  stopToken?: string
   highResolutionScaling?: number
+}
+
+interface ClickMapItem {
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
+  feature: ReturnType<Feature['toJSON']>
 }
 
 export default class ManhattanPlotRenderer extends FeatureRendererType {
@@ -47,16 +50,13 @@ export default class ManhattanPlotRenderer extends FeatureRendererType {
     const region = regions[0]!
     const width = (region.end - region.start) / bpPerPx
 
-    const { reducedFeatures, ...rest } = await updateStatus(
-      'Rendering plot',
-      statusCallback,
-      () =>
-        renderToAbstractCanvas(width, height, renderProps, ctx =>
-          this.draw(ctx, {
-            ...renderProps,
-            features,
-          }),
-        ),
+    const rest = await updateStatus('Rendering plot', statusCallback, () =>
+      renderToAbstractCanvas(width, height, renderProps, ctx =>
+        this.draw(ctx, {
+          ...renderProps,
+          features,
+        }),
+      ),
     )
 
     const results = await super.render({
@@ -70,9 +70,7 @@ export default class ManhattanPlotRenderer extends FeatureRendererType {
     return {
       ...results,
       ...rest,
-      features: reducedFeatures
-        ? new Map<string, Feature>(reducedFeatures.map(r => [r.id(), r]))
-        : results.features,
+      features,
       height,
       width,
       containsNoTransferables: true,
@@ -104,89 +102,28 @@ export default class ManhattanPlotRenderer extends FeatureRendererType {
       ...scaleOpts,
       range: [0, height],
     })
-    const yOffset = height + YSCALEBAR_LABEL_OFFSET
-    const toY = (n: number) => yOffset - scale(n)
+    const toY = (n: number) => height + YSCALEBAR_LABEL_OFFSET - scale(n)
 
-    const { isCallback } = config.color
+    const colorCallback = config.color.isCallback
     const colorValue = config.color.value as string
+    // Batched drawing (single beginPath/fill) is faster but doesn't work with
+    // alpha blending since overlapping circles would blend incorrectly
     const canBatch =
-      !isCallback &&
+      !colorCallback &&
       !colorValue.includes('rgba') &&
       !colorValue.includes('hsla')
-    const items: {
-      minX: number
-      minY: number
-      maxX: number
-      maxY: number
-      feature: any
-    }[] = []
 
-    let lastRenderedBlobX = 0
-    let lastRenderedBlobY = 0
-    let start = performance.now()
-    let i = 0
-
-    if (canBatch) {
-      ctx.fillStyle = colorValue
-      ctx.beginPath()
-      for (const feature of features.values()) {
-        if (i++ % 100 === 0 && performance.now() - start > 200) {
-          checkStopToken(stopToken)
-          start = performance.now()
-        }
-        const leftPx = (feature.get('start') - regionStart) * pxPerBp
-        const y = toY(feature.get('score'))
-        if (
-          Math.abs(leftPx - lastRenderedBlobX) > 1 ||
-          Math.abs(y - lastRenderedBlobY) > 1
-        ) {
-          ctx.moveTo(leftPx + POINT_RADIUS, y)
-          ctx.arc(leftPx, y, POINT_RADIUS, 0, TWO_PI)
-          lastRenderedBlobY = y
-          lastRenderedBlobX = leftPx
-          items.push({
-            minX: leftPx - POINT_RADIUS,
-            minY: y - POINT_RADIUS,
-            maxX: leftPx + POINT_RADIUS,
-            maxY: y + POINT_RADIUS,
-            feature: feature.toJSON(),
-          })
-        }
-      }
-      ctx.fill()
-    } else {
-      if (!isCallback) {
-        ctx.fillStyle = colorValue
-      }
-      for (const feature of features.values()) {
-        if (i++ % 100 === 0 && performance.now() - start > 200) {
-          checkStopToken(stopToken)
-          start = performance.now()
-        }
-        const leftPx = (feature.get('start') - regionStart) * pxPerBp
-        const y = toY(feature.get('score'))
-        if (
-          Math.abs(leftPx - lastRenderedBlobX) > 1 ||
-          Math.abs(y - lastRenderedBlobY) > 1
-        ) {
-          if (isCallback) {
-            ctx.fillStyle = readConfObject(config, 'color', { feature })
-          }
-          ctx.beginPath()
-          ctx.arc(leftPx, y, POINT_RADIUS, 0, TWO_PI)
-          ctx.fill()
-          lastRenderedBlobY = y
-          lastRenderedBlobX = leftPx
-          items.push({
-            minX: leftPx - POINT_RADIUS,
-            minY: y - POINT_RADIUS,
-            maxX: leftPx + POINT_RADIUS,
-            maxY: y + POINT_RADIUS,
-            feature: feature.toJSON(),
-          })
-        }
-      }
-    }
+    const items = this.drawPoints(ctx, {
+      features,
+      regionStart,
+      pxPerBp,
+      toY,
+      config,
+      colorValue,
+      colorCallback,
+      canBatch,
+      stopToken,
+    })
 
     if (displayCrossHatches) {
       ctx.lineWidth = 1
@@ -209,12 +146,94 @@ export default class ManhattanPlotRenderer extends FeatureRendererType {
       }
     }
     index.finish()
+    return { clickMap: { index: index.data, items } }
+  }
 
-    return {
-      clickMap: {
-        index: index.data,
-        items,
-      },
+  drawPoints(
+    ctx: CanvasRenderingContext2D,
+    opts: {
+      features: Map<string, Feature>
+      regionStart: number
+      pxPerBp: number
+      toY: (n: number) => number
+      config: AnyConfigurationModel
+      colorValue: string
+      colorCallback: boolean
+      canBatch: boolean
+      stopToken?: string
+    },
+  ) {
+    const {
+      features,
+      regionStart,
+      pxPerBp,
+      toY,
+      config,
+      colorValue,
+      colorCallback,
+      canBatch,
+      stopToken,
+    } = opts
+    const items: ClickMapItem[] = []
+    let lastX = 0
+    let lastY = 0
+    let checkTime = performance.now()
+    let i = 0
+
+    const addPoint = (feature: Feature, x: number, y: number) => {
+      if (Math.abs(x - lastX) > 1 || Math.abs(y - lastY) > 1) {
+        lastX = x
+        lastY = y
+        items.push({
+          minX: x - POINT_RADIUS,
+          minY: y - POINT_RADIUS,
+          maxX: x + POINT_RADIUS,
+          maxY: y + POINT_RADIUS,
+          feature: feature.toJSON(),
+        })
+        return true
+      }
+      return false
     }
+
+    // Split into two loops for performance - the batched path avoids
+    // repeated beginPath/fill calls and color lookups
+    if (canBatch) {
+      ctx.fillStyle = colorValue
+      ctx.beginPath()
+      for (const feature of features.values()) {
+        if (i++ % 100 === 0 && performance.now() - checkTime > 200) {
+          checkStopToken(stopToken)
+          checkTime = performance.now()
+        }
+        const x = (feature.get('start') - regionStart) * pxPerBp
+        const y = toY(feature.get('score'))
+        if (addPoint(feature, x, y)) {
+          ctx.moveTo(x + POINT_RADIUS, y)
+          ctx.arc(x, y, POINT_RADIUS, 0, TWO_PI)
+        }
+      }
+      ctx.fill()
+    } else {
+      ctx.fillStyle = colorValue
+      for (const feature of features.values()) {
+        if (i++ % 100 === 0 && performance.now() - checkTime > 200) {
+          checkStopToken(stopToken)
+          checkTime = performance.now()
+        }
+        const x = (feature.get('start') - regionStart) * pxPerBp
+        const y = toY(feature.get('score'))
+        if (addPoint(feature, x, y)) {
+          if (colorCallback) {
+            ctx.fillStyle = readConfObject(config, 'color', { feature })
+          }
+          ctx.beginPath()
+          ctx.arc(x, y, POINT_RADIUS, 0, TWO_PI)
+          ctx.fill()
+        }
+      }
+    }
+
+    return items
   }
 }

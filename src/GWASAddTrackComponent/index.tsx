@@ -4,9 +4,7 @@ import type PluginManager from '@jbrowse/core/PluginManager'
 
 const GWASAddTrackComponent = lazy(() => import('./GWASAddTrackComponent'))
 
-export default function GWASAddTrackComponentF(
-  pluginManager: PluginManager,
-) {
+export default function GWASAddTrackComponentF(pluginManager: PluginManager) {
   pluginManager.addToExtensionPoint(
     'Core-addTrackComponent',
     // @ts-expect-error

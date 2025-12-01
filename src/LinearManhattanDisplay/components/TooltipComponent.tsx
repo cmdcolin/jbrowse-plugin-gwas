@@ -7,7 +7,6 @@ import { observer } from 'mobx-react'
 
 import type { AnyConfigurationModel } from '@jbrowse/core/configuration'
 import type { Feature } from '@jbrowse/core/util'
-import type { TooltipContentsComponent } from '@jbrowse/plugin-wiggle'
 
 export interface Props {
   feature: Feature
@@ -28,15 +27,12 @@ const TooltipContents = React.forwardRef<HTMLDivElement, Props>(
   },
 )
 
-type Coord = [number, number]
-
 const TooltipComponent = observer(function (props: {
   model: Model
   height: number
-  offsetMouseCoord: Coord
-  clientMouseCoord: Coord
+  offsetMouseCoord: [number, number]
+  clientMouseCoord: [number, number]
   clientRect?: DOMRect
-  TooltipContents?: TooltipContentsComponent
 }) {
   return <Tooltip TooltipContents={TooltipContents} {...props} />
 })

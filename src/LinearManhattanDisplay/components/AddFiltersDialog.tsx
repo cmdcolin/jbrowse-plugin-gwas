@@ -20,10 +20,6 @@ const useStyles = makeStyles()({
   },
 })
 
-function checkJexl(code: string) {
-  stringToJexlExpression(code)
-}
-
 const AddFiltersDialog = observer(function ({
   model,
   handleClose,
@@ -42,13 +38,12 @@ const AddFiltersDialog = observer(function ({
 
   useEffect(() => {
     try {
-      data
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => !!line)
-        .map(line => {
-          checkJexl(line.trim())
-        })
+      for (const line of data.split('\n')) {
+        const trimmed = line.trim()
+        if (trimmed) {
+          stringToJexlExpression(trimmed)
+        }
+      }
       setError(undefined)
     } catch (e) {
       console.error(e)

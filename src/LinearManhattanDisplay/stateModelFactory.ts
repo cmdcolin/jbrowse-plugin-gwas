@@ -58,21 +58,12 @@ export function stateModelFactory(
       },
       /**
        * #getter
-       * older way of showing y-scalebar
        */
       get needsScalebar() {
         return true
       },
       /**
        * #getter
-       * newer way of showing y-scalebar
-       */
-      get graphType() {
-        return true
-      },
-      /**
-       * #getter
-       * never too large!
        */
       get regionTooLarge() {
         return false
@@ -108,7 +99,6 @@ export function stateModelFactory(
               featureData: feature.toJSON(),
             },
           )
-
           session.showWidget(featureWidget)
         }
         if (isSelectionContainer(session)) {
@@ -132,9 +122,8 @@ export function stateModelFactory(
          * #method
          */
         renderProps() {
-          const superProps = superRenderProps()
           return {
-            ...(superProps as Omit<typeof superProps, symbol>),
+            ...superRenderProps(),
             config: self.rendererConfig,
             filters: new SerializableFilterChain({
               filters: self.activeFilters,
@@ -152,10 +141,7 @@ export function stateModelFactory(
               onClick: () => {
                 getSession(self).queueDialog(handleClose => [
                   AddFiltersDialog,
-                  {
-                    model: self,
-                    handleClose,
-                  },
+                  { model: self, handleClose },
                 ])
               },
             },
