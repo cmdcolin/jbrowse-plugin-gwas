@@ -2,7 +2,7 @@ import type PluginManager from '@jbrowse/core/PluginManager'
 import type { Feature } from '@jbrowse/core/util'
 
 function toP(s = 0) {
-  return +(+s).toPrecision(6)
+  return +s.toPrecision(6)
 }
 
 const en = (n: number) => n.toLocaleString('en-US')

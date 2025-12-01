@@ -23,20 +23,16 @@ export default function GuessAdapterF(pluginManager: PluginManager) {
       ) => {
         const fileName = getFileName(file)
         const indexName = index && getFileName(index)
-        if (
-          testAdapter(fileName, /\.txt\.gz$/i, adapterHint, 'GWASAdapter')
-        ) {
-          return {
-            type: 'GWASAdapter',
-            bedGzLocation: file,
-            index: {
-              location: index || makeIndex(file, '.tbi'),
-              indexType: makeIndexType(indexName, 'CSI', 'TBI'),
-            },
-          }
-        } else {
-          return adapterGuesser(file, index, adapterHint)
-        }
+        return testAdapter(fileName, /\.txt\.gz$/i, adapterHint, 'GWASAdapter')
+          ? {
+              type: 'GWASAdapter',
+              bedGzLocation: file,
+              index: {
+                location: index || makeIndex(file, '.tbi'),
+                indexType: makeIndexType(indexName, 'CSI', 'TBI'),
+              },
+            }
+          : adapterGuesser(file, index, adapterHint)
       }
     },
   )

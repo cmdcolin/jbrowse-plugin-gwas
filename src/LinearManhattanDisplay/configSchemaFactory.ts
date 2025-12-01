@@ -62,12 +62,6 @@ export function configSchemaFactory(pluginManager: PluginManager) {
         description: 'draw upside down',
         defaultValue: false,
       },
-
-      defaultRendering: {
-        type: 'stringEnum',
-        model: types.enumeration('Rendering', ['density', 'xyplot', 'line']),
-        defaultValue: 'xyplot',
-      },
       renderers: ConfigurationSchema('RenderersConfiguration', {
         LinearManhattanRenderer: LinearManhattanRendererConfigSchema,
       }),

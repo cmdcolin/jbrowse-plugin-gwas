@@ -2,62 +2,57 @@ import React, { useMemo, useRef } from 'react'
 
 import { PrerenderedCanvas } from '@jbrowse/core/ui'
 import { SimpleFeature } from '@jbrowse/core/util'
-import { observer } from 'mobx-react'
 import Flatbush from 'flatbush'
+import { observer } from 'mobx-react'
 
-import type { Feature } from '@jbrowse/core/util'
-import type { Region } from '@jbrowse/core/util/types'
+import type { SimpleFeatureSerialized } from '@jbrowse/core/util'
 
-const LinearManhattanRendering = observer(function (props: {
-  regions: Region[]
-  features: Map<string, Feature>
-  bpPerPx: number
+interface Props {
   width: number
   height: number
-  blockKey: string
-  scaleOpts: any
-  clickMap: any
-  onMouseLeave?: (event: React.MouseEvent) => void
-  onMouseMove?: (event: React.MouseEvent, arg?: string) => void
-  onFeatureClick?: (event: React.MouseEvent, arg?: string) => void
-}) {
-  const { height, onMouseLeave, onMouseMove, onFeatureClick, clickMap } = props
-  const clickMapData = useMemo(() => {
-    const index = Flatbush.from(clickMap.index)
-    return { index, items: clickMap.items }
-  }, [clickMap])
-  const ref = useRef<HTMLDivElement>(null)
-
-  function getFeatureUnderMouse(eventClientX: number, eventClientY: number) {
-    let offsetX = 0
-    let offsetY = 0
-    if (ref.current) {
-      const r = ref.current.getBoundingClientRect()
-      offsetX = eventClientX - r.left
-      offsetY = eventClientY - r.top
-    }
-    const indices = clickMapData.index.search(
-      offsetX,
-      offsetY,
-      offsetX + 3,
-      offsetY + 3,
-    )
-    const firstIndex = indices[0]
-    return firstIndex !== undefined
-      ? new SimpleFeature(clickMapData.items[firstIndex]?.feature)
-      : undefined
+  clickMap: {
+    index: ArrayBuffer
+    items: { feature: SimpleFeatureSerialized }[]
   }
+  onMouseLeave?: (event: React.MouseEvent) => void
+  onMouseMove?: (event: React.MouseEvent, featureId?: string) => void
+  onFeatureClick?: (event: React.MouseEvent, featureId?: string) => void
+  // passed through to PrerenderedCanvas
+  [key: string]: unknown
+}
+
+const LinearManhattanRendering = observer(function (props: Props) {
+  const { height, onMouseLeave, onMouseMove, onFeatureClick, clickMap } = props
+  const ref = useRef<HTMLDivElement>(null)
+  const clickMapIndex = useMemo(
+    () => Flatbush.from(clickMap.index),
+    [clickMap.index],
+  )
+
+  function getFeatureUnderMouse(clientX: number, clientY: number) {
+    if (!ref.current) {
+      return undefined
+    }
+    const rect = ref.current.getBoundingClientRect()
+    const x = clientX - rect.left
+    const y = clientY - rect.top
+    const [firstIndex] = clickMapIndex.search(x, y, x + 3, y + 3)
+    const item =
+      firstIndex !== undefined ? clickMap.items[firstIndex] : undefined
+    return item ? new SimpleFeature(item.feature) : undefined
+  }
+
   return (
     <div
       ref={ref}
-      data-testid="wiggle-rendering-test"
+      data-testid="manhattan-rendering"
       onMouseMove={e =>
         onMouseMove?.(e, getFeatureUnderMouse(e.clientX, e.clientY)?.id())
       }
       onClick={e =>
         onFeatureClick?.(e, getFeatureUnderMouse(e.clientX, e.clientY)?.id())
       }
-      onMouseLeave={e => onMouseLeave?.(e)}
+      onMouseLeave={onMouseLeave}
       style={{
         overflow: 'visible',
         position: 'relative',
